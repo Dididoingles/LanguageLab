@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Lab - Home</title>
+    
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===== LIGHT MODE (DEFAULT) ===== */
+        :root {
+            --primary: #c20000;
+            --primary-hover: #a00000;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f8f8;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --border: #e0e0e0;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --bg-secondary-rgb: 248, 248, 248;
+        }
+
+        /* ===== DARK MODE CLASS ===== */
+        body.dark-mode {
+            --primary: #c20000;
+            --primary-hover: #a00000;
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border: #404040;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
+            --bg-secondary-rgb: 45, 45, 45;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.2s ease;
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== LAYOUT ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Labs Grid */
+        .labs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        /* Lab Card Buttons */
+        .lab-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .lab-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+            border-color: var(--primary);
+        }
+
+        .lab-icon {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .lab-card h3 {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .lab-card p {
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            max-width: 250px;
+        }
+
+        .lab-arrow {
+            color: var(--primary);
+            font-size: 1.5rem;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .lab-card:hover .lab-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Feature Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+            padding-top: 4rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .feature {
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== NAVIGATION ===== */
+        .navbar {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background-color: rgba(var(--bg-secondary-rgb), 0.9);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            font-weight: 500;
+            text-decoration: none;  /* Remove qualquer sublinhado */
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);  /* Muda a cor no hover, sem sublinhado */
+        }
+
+        /* ===== THEME TOGGLE ===== */
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle:hover {
+            background: var(--border);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .stagger > * {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .stagger > *:nth-child(1) { animation-delay: 0.1s; }
+        .stagger > *:nth-child(2) { animation-delay: 0.2s; }
+        .stagger > *:nth-child(3) { animation-delay: 0.3s; }
+        .stagger > *:nth-child(4) { animation-delay: 0.4s; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .hero {
+                padding: 2rem 0;
+            }
+            
+            .labs-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 2rem; }
+            
+            .lab-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">LANGUAGE LAB</div>
+            
+            <ul class="nav-links">
+                <li><a href="#" class="active">Início</a></li>
+                <li><a href="#">Labs</a></li>
+                <li><a href="#">Sobre</a></li>
+                <li><a href="#">Contato</a></li>
+            </ul>
+            
+            <!-- Dark mode toggle -->
+            <button class="theme-toggle" id="themeToggle">
+                <span id="themeIcon">☀️</span> 
+                <span id="themeText">Light</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Hero Section -->
+        <div class="hero fade-in">
+            <h1>Bem-vindo ao<br>Language Lab</h1>
+            <p>Um espaço para praticar e desenvolver suas habilidades em inglês. Escolha um laboratório e comece agora.</p>
+        </div>
+
+        <!-- Labs Grid -->
+        <h2 class="fade-in" style="text-align: center;">Nossos Laboratórios</h2>
+        
+        <div class="labs-grid stagger">
+            <!-- Listening Lab Card -->
+            <div class="lab-card" onclick="window.location.href='#';">
+                <div class="lab-icon">🎧</div>
+                <h3>Listening Lab</h3>
+                <p>Pratique compreensão auditiva com áudios, músicas e exercícios de pronúncia.</p>
+                <div class="lab-arrow">→</div>
+            </div>
+
+            <!-- Reading Lab Card -->
+            <div class="lab-card" onclick="window.location.href='#';">
+                <div class="lab-icon">📚</div>
+                <h3>Reading Lab</h3>
+                <p>Textos para todos os níveis, com exercícios de interpretação e vocabulário.</p>
+                <div class="lab-arrow">→</div>
+            </div>
+
+            <!-- Writing Lab Card -->
+            <div class="lab-card" onclick="window.location.href='#';">
+                <div class="lab-icon">✍️</div>
+                <h3>Writing Lab</h3>
+                <p>Pratique sua escrita com prompts diários, profissionais e acadêmicos.</p>
+                <div class="lab-arrow">→</div>
+            </div>
+
+            <!-- Speaking Lab Card -->
+            <div class="lab-card" onclick="window.location.href='#';">
+                <div class="lab-icon">💬</div>
+                <h3>Speaking Lab</h3>
+                <p>Guias de conversação, pronúncia e expressões para falar com confiança.</p>
+                <div class="lab-arrow">→</div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🎯</div>
+                <h4>Para todos os níveis</h4>
+                <p>Conteúdo organizado do iniciante ao avançado</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h4>Atividades rápidas</h4>
+                <p>Exercícios práticos para o dia a dia</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="margin-top: 4rem; padding: 2rem; background: var(--bg-secondary); border-top: 1px solid var(--border);">
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: var(--text-secondary);">
+            <p>Language Lab © 2026 - desenvolvido por @dicarvalho.prof</p>
+            <div style="display: flex; gap: 2rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
+                <a href="#">Início</a>
+                <a href="#">Labs</a>
+                <a href="#">Sobre</a>
+                <a href="#">Contato</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script for dark mode -->
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+        
+        // Check for saved preference
+        const savedMode = localStorage.getItem('darkMode');
+        
+        if (savedMode === 'true') {
+            document.body.classList.add('dark-mode');
+            themeIcon.textContent = '🌙';
+            themeText.textContent = 'Dark';
+        } else {
+            document.body.classList.remove('dark-mode');
+            themeIcon.textContent = '☀️';
+            themeText.textContent = 'Light';
+        }
+        
+        // Toggle function
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+            } else {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            }
+            
+            localStorage.setItem('darkMode', isDarkMode);
+        });
+    </script>
+</body>
+</html>
