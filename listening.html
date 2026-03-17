@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listening Lab - Language Lab</title>
+    
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===== LIGHT MODE (DEFAULT) ===== */
+        :root {
+            --primary: #c20000;
+            --primary-hover: #a00000;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f8f8;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --border: #e0e0e0;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --bg-secondary-rgb: 248, 248, 248;
+        }
+
+        /* ===== DARK MODE CLASS ===== */
+        body.dark-mode {
+            --primary: #c20000;
+            --primary-hover: #a00000;
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border: #404040;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
+            --bg-secondary-rgb: 45, 45, 45;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.2s ease;
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* ===== LAYOUT ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+        }
+
+        /* Grid de Atividades */
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--hover-shadow);
+            border-color: var(--primary);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== BOTÕES ===== */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(194, 0, 0, 0.3);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* ===== NAVEGAÇÃO ===== */
+        .navbar {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background-color: rgba(var(--bg-secondary-rgb), 0.9);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle:hover {
+            background: var(--border);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            
+            .activities-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* Animação simples */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">LANGUAGE LAB</div>
+            
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="#" class="active">Listening</a></li>
+                <li><a href="#">Reading</a></li>
+                <li><a href="#">Writing</a></li>
+                <li><a href="#">Speaking</a></li>
+            </ul>
+            
+            <button class="theme-toggle" id="themeToggle">
+                <span id="themeIcon">☀️</span> 
+                <span id="themeText">Light</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="index.html">Início</a> / Listening Lab
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header fade-in">
+            <h1>🎧 Listening Lab</h1>
+            <p>Pratique sua compreensão auditiva com áudios, exercícios de pronúncia e atividades interativas.</p>
+        </div>
+
+        <!-- Atividades Principais -->
+        <h2>Atividades</h2>
+        <div class="activities-grid">
+            <div class="card">
+                <div class="card-icon">🎵</div>
+                <h3>Música</h3>
+                <p>Complete as letras das músicas enquanto ouve. Pratique listening com seus artistas favoritos.</p>
+                <button class="btn btn-primary" onclick="window.open('#');">Escolher música</button>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🗣️</div>
+                <h3>Pares Mínimos</h3>
+                <p>Pratique sons que causam dificuldade: ship/sheep, beat/bit, beach/bitch.</p>
+                <button class="btn btn-primary" onclick="window.open('https://ipachart.app/pt/compare', '_blank', 'width=1000,height=700,left=200,top=100,resizable=yes,scrollbars=yes');">Praticar</button>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📊</div>
+                <h3>IPA Chart</h3>
+                <p>Tabela completa do Alfabeto Fonético Internacional com exemplos em áudio.</p>
+                <button class="btn btn-primary" onclick="window.open('https://ipachart.app/pt', '_blank', 'width=1000,height=700,left=200,top=100,resizable=yes,scrollbars=yes');">Explorar</button>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🔤</div>
+                <h3>The Alphabet</h3>
+                <p>Pratique a pronúncia correta de cada letra do alfabeto inglês.</p>
+                <button class="btn btn-primary" onclick="window.open('https://ipachart.app/pt/alphabet', '_blank', 'width=1000,height=700,left=200,top=100,resizable=yes,scrollbars=yes');">Começar</button>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🔄</div>
+                <h3>Tradutor IPA</h3>
+                <p>Veja a representação fonética de qualquer palavra em inglês.</p>
+                <button class="btn btn-primary" onclick="window.open('https://ipachart.app/pt/ipa-translator', '_blank', 'width=1000,height=700,left=200,top=100,resizable=yes,scrollbars=yes');">Usar</button>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎤</div>
+                <h3>Sing Along</h3>
+                <p>Cante junto e pratique pronúncia com karaokê.</p>
+                <button class="btn btn-primary" onclick="window.open('#');">Começar</button>
+            </div>
+        </div>
+
+        <!-- Recursos Adicionais -->
+        <h2 style="margin-top: 3rem;">Recursos</h2>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+            <div class="card" style="padding: 1.5rem;">
+                <h3 style="font-size: 1.1rem;">🎯 Teste seu listening</h3>
+                <p>Avalie seu nível com exercícios de compreensão.</p>
+                <a href="#" style="color: var(--primary); text-decoration: none;" onclick="window.open('#'); return false;">começar →</a>
+            </div>
+            
+            <div class="card" style="padding: 1.5rem;">
+                <h3 style="font-size: 1.1rem;">📚 Referência rápida</h3>
+                <p>Guias de pronúncia e fonética.</p>
+                <a href="#" style="color: var(--primary); text-decoration: none;" onclick="window.open('#'); return false;">acessar →</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="margin-top: 4rem; padding: 2rem; background: var(--bg-secondary); border-top: 1px solid var(--border);">
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center; color: var(--text-secondary);">
+            <p>Language Lab © 2026 - desenvolvido por @dicarvalho.prof</p>
+        </div>
+    </footer>
+
+    <!-- Script para dark mode -->
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+        
+        const savedMode = localStorage.getItem('darkMode');
+        if (savedMode === 'true') {
+            document.body.classList.add('dark-mode');
+            themeIcon.textContent = '🌙';
+            themeText.textContent = 'Dark';
+        }
+
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            themeIcon.textContent = isDarkMode ? '🌙' : '☀️';
+            themeText.textContent = isDarkMode ? 'Dark' : 'Light';
+            localStorage.setItem('darkMode', isDarkMode);
+        });
+    </script>
+</body>
+</html>
