@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speaking Lab - Shadowing Studio</title>
+    <title>Speaking Lab - Shadowing Studio 🦇</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #c20000;
-            --white: #ffffff;
-            --bg: #f9f9f9;
-            --text: #333;
+            --dark-bg: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text: #ffffff;
+            --gray: #888;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--bg);
+            background-color: var(--dark-bg);
             color: var(--text);
             display: flex;
             justify-content: center;
@@ -25,85 +26,112 @@
         }
 
         .container {
-            background: var(--white);
+            background: var(--card-bg);
             padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             text-align: center;
-            width: 90%;
-            max-width: 400px;
+            width: 85%;
+            max-width: 350px;
+            border: 1px solid #333;
         }
 
-        h1 { color: var(--primary); font-size: 1.5rem; margin-bottom: 0.5rem; }
-        p { font-size: 0.9rem; color: #666; margin-bottom: 2rem; }
+        h1 { color: var(--primary); font-size: 1.4rem; margin-bottom: 0; }
+        .subtitle { font-size: 0.8rem; color: var(--gray); margin-bottom: 1.5rem; }
 
-        .visualizer-container {
-            height: 60px;
+        /* Timer */
+        #timer {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-variant-numeric: tabular-nums;
+            color: var(--text);
+        }
+
+        /* Waveform Simples */
+        .waveform {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 3px;
+            gap: 4px;
+            height: 50px;
             margin-bottom: 2rem;
         }
-
         .bar {
             width: 4px;
-            height: 10px;
+            height: 8px;
             background: var(--primary);
-            border-radius: 10px;
+            border-radius: 4px;
             transition: height 0.1s ease;
         }
 
         .controls {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .btn {
             border: none;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 14px;
+            border-radius: 14px;
             font-family: 'Poppins';
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            font-size: 1rem;
         }
 
+        /* Botão Gravar */
         #recordBtn { background: var(--primary); color: white; }
-        #recordBtn.recording { background: #333; animation: pulse 1.5s infinite; }
+        #recordBtn.recording { 
+            background: #444; 
+            animation: pulse 1.5s infinite; 
+        }
         
-        #playBtn { background: #eee; color: #333; display: none; }
-        #playBtn:hover { background: #ddd; }
+        /* Botões Play e Reset */
+        .secondary-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            display: none; /* Escondidos até ter gravação */
+        }
+        #playBtn { background: #444; color: white; }
+        #resetBtn { background: transparent; color: var(--gray); border: 1px solid #444; }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
+            0% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(194, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0); }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Speaking Lab</h1>
-    <p>Pratique o Shadowing: grave sua voz e compare a pronúncia.</p>
+    <h1>Speaking Lab 🦇</h1>
+    <div class="subtitle">I'm Batman... and I'm listening.</div>
 
-    <div class="visualizer-container" id="visualizer">
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div id="timer">00:00</div>
+
+    <div class="waveform" id="waveform">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
     </div>
 
     <div class="controls">
         <button id="recordBtn" class="btn">
-            <span id="recordIcon">🎤</span> <span id="recordText">Segurar para Gravar</span>
+            <span id="recordIcon">🎙️</span> <span id="recordText">Start Shadowing</span>
         </button>
-        <button id="playBtn" class="btn">
-            <span>▶️</span> Ouvir minha voz
-        </button>
+        
+        <div class="secondary-btns" id="postRecording">
+            <button id="playBtn" class="btn">▶️ Play</button>
+            <button id="resetBtn" class="btn">🗑️ Reset</button>
+        </div>
     </div>
 </div>
 
@@ -111,48 +139,78 @@
     let mediaRecorder;
     let audioChunks = [];
     let audioUrl;
+    let startTime;
+    let timerInterval;
+
     const recordBtn = document.getElementById('recordBtn');
     const playBtn = document.getElementById('playBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const postRecording = document.getElementById('postRecording');
+    const timerDisplay = document.getElementById('timer');
     const bars = document.querySelectorAll('.bar');
 
-    async function startRecording() {
-        try {
+    // Função para animar as barrinhas (simulação de Waveform)
+    function animateBars() {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+            bars.forEach(bar => {
+                const height = Math.random() * 40 + 10;
+                bar.style.height = height + 'px';
+            });
+            requestAnimationFrame(animateBars);
+        } else {
+            bars.forEach(bar => bar.style.height = '8px');
+        }
+    }
+
+    function updateTimer() {
+        const now = new Date();
+        const diff = new Date(now - startTime);
+        const mins = String(diff.getMinutes()).padStart(2, '0');
+        const secs = String(diff.getSeconds()).padStart(2, '0');
+        timerDisplay.innerText = `${mins}:${secs}`;
+    }
+
+    async function toggleRecording() {
+        if (!mediaRecorder || mediaRecorder.state === "inactive") {
+            // Iniciar
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorder = new MediaRecorder(stream);
             audioChunks = [];
 
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
             mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                audioUrl = URL.createObjectURL(audioBlob);
-                playBtn.style.display = 'flex';
+                audioUrl = URL.createObjectURL(new Blob(audioChunks));
+                postRecording.style.display = 'grid';
+                recordBtn.style.display = 'none';
             };
 
             mediaRecorder.start();
+            startTime = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
             recordBtn.classList.add('recording');
-            recordBtn.querySelector('#recordText').innerText = "Gravando...";
-        } catch (err) {
-            alert("Erro ao acessar microfone: " + err.message);
-        }
-    }
-
-    function stopRecording() {
-        if (mediaRecorder && mediaRecorder.state === "recording") {
+            recordBtn.innerHTML = "⏹️ Stop Recording";
+            animateBars();
+        } else {
+            // Parar
             mediaRecorder.stop();
+            clearInterval(timerInterval);
             recordBtn.classList.remove('recording');
-            recordBtn.querySelector('#recordText').innerText = "Segurar para Gravar";
         }
     }
 
-    // Eventos para Mouse e Touch (Mobile)
-    recordBtn.addEventListener('mousedown', startRecording);
-    recordBtn.addEventListener('mouseup', stopRecording);
-    recordBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startRecording(); });
-    recordBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopRecording(); });
+    recordBtn.onclick = toggleRecording;
 
     playBtn.onclick = () => {
-        const audio = new Audio(audioUrl);
-        audio.play();
+        new Audio(audioUrl).play();
+    };
+
+    resetBtn.onclick = () => {
+        audioUrl = null;
+        postRecording.style.display = 'none';
+        recordBtn.style.display = 'flex';
+        recordBtn.innerHTML = "🎙️ Start Shadowing";
+        timerDisplay.innerText = "00:00";
+        bars.forEach(bar => bar.style.height = '8px');
     };
 </script>
 
