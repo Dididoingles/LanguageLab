@@ -8,68 +8,85 @@
     <style>
         :root {
             --primary: #c20000;
-            --dark-bg: #1a1a1a;
-            --card-bg: #2d2d2d;
+            --bg: #ffffff;
+            --card: #f9f9f9;
+            --text: #333;
+            --border: #eee;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --card: #2d2d2d;
             --text: #ffffff;
-            --gray: #888;
+            --border: #444;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--dark-bg);
+            background-color: var(--bg);
             color: var(--text);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            transition: all 0.3s ease;
+        }
+
+        .theme-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 1.5rem;
         }
 
         .container {
-            background: var(--card-bg);
+            background: var(--card);
             padding: 2rem;
             border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
             width: 85%;
             max-width: 350px;
-            border: 1px solid #333;
+            border: 1px solid var(--border);
         }
 
-        h1 { color: var(--primary); font-size: 1.4rem; margin-bottom: 0; }
-        .subtitle { font-size: 0.8rem; color: var(--gray); margin-bottom: 1.5rem; }
+        h1 { color: var(--primary); font-size: 1.4rem; margin-bottom: 5px; }
+        .subtitle { font-size: 0.8rem; opacity: 0.7; margin-bottom: 1.5rem; }
 
-        /* Timer */
-        #timer {
-            font-size: 2.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            font-variant-numeric: tabular-nums;
-            color: var(--text);
-        }
+        #timer { font-size: 2.5rem; font-weight: 600; margin-bottom: 1rem; }
 
-        /* Waveform Simples */
         .waveform {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
-            height: 50px;
-            margin-bottom: 2rem;
+            height: 40px;
+            margin-bottom: 1.5rem;
         }
-        .bar {
-            width: 4px;
-            height: 8px;
-            background: var(--primary);
-            border-radius: 4px;
-            transition: height 0.1s ease;
-        }
+        .bar { width: 4px; height: 8px; background: var(--primary); border-radius: 4px; transition: height 0.1s ease; }
 
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        /* Custom Audio Player */
+        .player-container { display: none; margin-bottom: 1.5rem; }
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px 0;
+            position: relative;
         }
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+        .time-info { display: flex; justify-content: space-between; font-size: 0.75rem; opacity: 0.8; }
 
         .btn {
             border: none;
@@ -78,43 +95,32 @@
             font-family: 'Poppins';
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            font-size: 1rem;
+            transition: transform 0.2s;
         }
+        .btn:active { transform: scale(0.98); }
 
-        /* Botão Gravar */
         #recordBtn { background: var(--primary); color: white; }
-        #recordBtn.recording { 
-            background: #444; 
-            animation: pulse 1.5s infinite; 
-        }
+        #recordBtn.recording { background: #333; animation: pulse 1.5s infinite; }
         
-        /* Botões Play e Reset */
-        .secondary-btns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            display: none; /* Escondidos até ter gravação */
-        }
-        #playBtn { background: #444; color: white; }
-        #resetBtn { background: transparent; color: var(--gray); border: 1px solid #444; }
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; display: none; }
+        #playBtn { background: var(--primary); color: white; }
+        #resetBtn { background: transparent; color: var(--text); border: 1px solid var(--border); }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(194, 0, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0); }
-        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
 </head>
-<body>
+<body data-theme="dark">
+
+<div class="theme-switch" id="themeToggle">🌓</div>
 
 <div class="container">
-    <h1>Speaking Lab 🦇</h1>
-    <div class="subtitle">I'm Batman... and I'm listening.</div>
+    <h1 id="title">Speaking Lab 🦇</h1>
+    <div class="subtitle" id="tagline">I'm Batman... and I'm listening.</div>
 
     <div id="timer">00:00</div>
 
@@ -123,12 +129,19 @@
         <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
     </div>
 
+    <div class="player-container" id="playerContainer">
+        <div class="progress-container" id="progressArea">
+            <div id="progress-bar"></div>
+        </div>
+        <div class="time-info">
+            <span id="currentTime">00:00</span>
+            <span id="totalTime">00:00</span>
+        </div>
+    </div>
+
     <div class="controls">
-        <button id="recordBtn" class="btn">
-            <span id="recordIcon">🎙️</span> <span id="recordText">Start Shadowing</span>
-        </button>
-        
-        <div class="secondary-btns" id="postRecording">
+        <button id="recordBtn" class="btn">🎙️ Start Shadowing</button>
+        <div class="action-btns" id="actionBtns">
             <button id="playBtn" class="btn">▶️ Play</button>
             <button id="resetBtn" class="btn">🗑️ Reset</button>
         </div>
@@ -136,83 +149,95 @@
 </div>
 
 <script>
-    let mediaRecorder;
-    let audioChunks = [];
-    let audioUrl;
-    let startTime;
-    let timerInterval;
-
+    let mediaRecorder, audioChunks = [], audioUrl, startTime, timerInterval, audioObj;
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
     const recordBtn = document.getElementById('recordBtn');
-    const playBtn = document.getElementById('playBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const postRecording = document.getElementById('postRecording');
+    const actionBtns = document.getElementById('actionBtns');
+    const playerContainer = document.getElementById('playerContainer');
+    const progressBar = document.getElementById('progress-bar');
+    const progressArea = document.getElementById('progressArea');
     const timerDisplay = document.getElementById('timer');
+    const curTimeTxt = document.getElementById('currentTime');
+    const totTimeTxt = document.getElementById('totalTime');
     const bars = document.querySelectorAll('.bar');
 
-    // Função para animar as barrinhas (simulação de Waveform)
+    // Troca de Tema
+    themeToggle.onclick = () => {
+        const current = body.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        body.setAttribute('data-theme', next);
+        document.getElementById('title').innerText = next === 'dark' ? "Speaking Lab 🦇" : "Speaking Lab ☀️";
+        document.getElementById('tagline').innerText = next === 'dark' ? "I'm Batman..." : "Clear as daylight.";
+    };
+
+    function formatTime(s) {
+        const mins = Math.floor(s / 60).toString().padStart(2, '0');
+        const secs = Math.floor(s % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
+    }
+
     function animateBars() {
-        if (mediaRecorder && mediaRecorder.state === "recording") {
-            bars.forEach(bar => {
-                const height = Math.random() * 40 + 10;
-                bar.style.height = height + 'px';
-            });
+        if (mediaRecorder?.state === "recording") {
+            bars.forEach(bar => bar.style.height = (Math.random() * 30 + 5) + 'px');
             requestAnimationFrame(animateBars);
-        } else {
-            bars.forEach(bar => bar.style.height = '8px');
-        }
+        } else { bars.forEach(bar => bar.style.height = '8px'); }
     }
 
-    function updateTimer() {
-        const now = new Date();
-        const diff = new Date(now - startTime);
-        const mins = String(diff.getMinutes()).padStart(2, '0');
-        const secs = String(diff.getSeconds()).padStart(2, '0');
-        timerDisplay.innerText = `${mins}:${secs}`;
-    }
-
-    async function toggleRecording() {
+    recordBtn.onclick = async () => {
         if (!mediaRecorder || mediaRecorder.state === "inactive") {
-            // Iniciar
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorder = new MediaRecorder(stream);
             audioChunks = [];
-
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
             mediaRecorder.onstop = () => {
-                audioUrl = URL.createObjectURL(new Blob(audioChunks));
-                postRecording.style.display = 'grid';
+                const blob = new Blob(audioChunks, { type: 'audio/wav' });
+                audioUrl = URL.createObjectURL(blob);
+                audioObj = new Audio(audioUrl);
+                audioObj.onloadedmetadata = () => totTimeTxt.innerText = formatTime(audioObj.duration);
+                audioObj.ontimeupdate = () => {
+                    const pct = (audioObj.currentTime / audioObj.duration) * 100;
+                    progressBar.style.width = pct + '%';
+                    curTimeTxt.innerText = formatTime(audioObj.currentTime);
+                };
+                audioObj.onended = () => { document.getElementById('playBtn').innerText = "▶️ Play"; progressBar.style.width = '0%'; };
+                playerContainer.style.display = 'block';
+                actionBtns.style.display = 'grid';
                 recordBtn.style.display = 'none';
             };
-
             mediaRecorder.start();
-            startTime = new Date();
-            timerInterval = setInterval(updateTimer, 1000);
+            startTime = Date.now();
+            timerInterval = setInterval(() => timerDisplay.innerText = formatTime((Date.now() - startTime) / 1000), 1000);
             recordBtn.classList.add('recording');
-            recordBtn.innerHTML = "⏹️ Stop Recording";
+            recordBtn.innerText = "⏹️ Stop Recording";
             animateBars();
         } else {
-            // Parar
             mediaRecorder.stop();
             clearInterval(timerInterval);
-            recordBtn.classList.remove('recording');
         }
-    }
-
-    recordBtn.onclick = toggleRecording;
-
-    playBtn.onclick = () => {
-        new Audio(audioUrl).play();
     };
 
-    resetBtn.onclick = () => {
-        audioUrl = null;
-        postRecording.style.display = 'none';
+    document.getElementById('playBtn').onclick = function() {
+        if (audioObj.paused) { audioObj.play(); this.innerText = "⏸️ Pause"; }
+        else { audioObj.pause(); this.innerText = "▶️ Play"; }
+    };
+
+    progressArea.onclick = (e) => {
+        const width = progressArea.clientWidth;
+        const clickX = e.offsetX;
+        audioObj.currentTime = (clickX / width) * audioObj.duration;
+    };
+
+    document.getElementById('resetBtn').onclick = () => {
+        if(audioObj) audioObj.pause();
+        playerContainer.style.display = 'none';
+        actionBtns.style.display = 'none';
         recordBtn.style.display = 'flex';
-        recordBtn.innerHTML = "🎙️ Start Shadowing";
+        recordBtn.innerText = "🎙️ Start Shadowing";
         timerDisplay.innerText = "00:00";
+        progressBar.style.width = '0%';
         bars.forEach(bar => bar.style.height = '8px');
     };
 </script>
-
 </body>
 </html>
