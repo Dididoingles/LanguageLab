@@ -119,7 +119,7 @@
 <div class="theme-switch" id="themeToggle">🌓</div>
 
 <div class="container">
-    <h1 id="title">Speaking Lab 🦇</h1>
+    <h1 id="title">Studio 🦇</h1>
     <div class="subtitle" id="tagline">I'm Batman... and I'm listening.</div>
 
     <div id="timer">00:00</div>
@@ -167,7 +167,7 @@
         const current = body.getAttribute('data-theme');
         const next = current === 'dark' ? 'light' : 'dark';
         body.setAttribute('data-theme', next);
-        document.getElementById('title').innerText = next === 'dark' ? "Speaking Lab 🦇" : "Speaking Lab ☀️";
+        document.getElementById('title').innerText = next === 'dark' ? "Studio 🦇" : "Studio ☀️";
         document.getElementById('tagline').innerText = next === 'dark' ? "I'm Batman..." : "Clear as daylight.";
     };
 
