@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speaking Lab - Tutor IA 🦇</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #c20000;
+            --bg: #fdfdfd;
+            --text: #333;
+            /* Efeito Vidro Claro */
+            --glass-bg: rgba(194, 0, 0, 0.05);
+            --glass-border: rgba(194, 0, 0, 0.1);
+            --glass-blur: blur(10px);
+            --chat-user: #f0f0f0;
+        }
+
+        [data-theme="dark"] {
+            --bg: #121212;
+            --text: #ffffff;
+            /* Efeito Vidro Escuro - Mais Intenso */
+            --glass-bg: rgba(194, 0, 0, 0.15);
+            --glass-border: rgba(194, 0, 0, 0.2);
+            --glass-blur: blur(15px);
+            --chat-user: #2d2d2d;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+            overflow: hidden; /* Impede scroll na página inteira */
+        }
+
+        /* Botão Modo Batman */
+        .theme-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 100;
+        }
+
+        /* Header Artístico */
+        .header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        [data-theme="dark"] .header {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .profile-container {
+            position: relative;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 15px rgba(194, 0, 0, 0.2);
+            transition: 0.3s;
+            object-fit: cover;
+        }
+
+        .profile-img.thinking {
+            animation: pulse-border 1.5s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(194, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0); }
+        }
+
+        /* Área de Chat */
+        #chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-bottom: 150px; /* Espaço para o rodapé fixo */
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 14px 20px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: messageSlide 0.4s ease-out;
+            position: relative;
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilo Vidro Vermelho para a IA da Di */
+        .tutor {
+            align-self: flex-start;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom-left-radius: 4px;
+            color: var(--text);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Estilo para a Transcrição "Interim" (Enquanto fala) */
+        .tutor.interim {
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        .user {
+            align-self: flex-end;
+            background: var(--chat-user);
+            border-bottom-right-radius: 4px;
+            color: var(--text);
+        }
+
+        /* Rodapé Fixo com Microfone */
+        .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            transition: background-color 0.3s;
+            z-index: 50;
+        }
+
+        [data-theme="dark"] .input-area {
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .mic-btn {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            box-shadow: 0 6px 20px rgba(194, 0, 0, 0.4);
+        }
+
+        .mic-btn.active {
+            transform: scale(1.1);
+            background: #333;
+            animation: recording-glow 1s infinite alternate;
+        }
+
+        @keyframes recording-glow {
+            from { box-shadow: 0 0 15px var(--primary); }
+            to { box-shadow: 0 0 35px var(--primary); }
+        }
+
+        .status-text {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            height: 20px;
+            text-align: center;
+        }
+
+        .verify-btn {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-family: 'Poppins';
+            font-weight: 600;
+            cursor: pointer;
+            display: none; /* Só aparece após falar */
+            transition: 0.3s;
+        }
+
+        .verify-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Barra de rolagem bonita */
+        #chat-container::-webkit-scrollbar { width: 6px; }
+        #chat-container::-webkit-scrollbar-track { background: transparent; }
+        #chat-container::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+        [data-theme="dark"] #chat-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
+    </style>
+</head>
+<body data-theme="light">
+
+    <div class="theme-switch" id="themeToggle">🌔</div>
+
+    <div class="header">
+        <div class="profile-container">
+            <img src="LINK_DA_SUA_FOTO_AQUI" class="profile-img" id="avatar" alt="IA da Di">
+        </div>
+        <h2 style="margin: 0; font-size: 1.3rem; font-weight: 600;" id="tutorName">IA da Di ☀️</h2>
+        <p class="status-text" id="status-hint">Seu laboratório pessoal de fluência.</p>
+    </div>
+
+    <div id="chat-container">
+        <div class="message tutor">
+            Hi! I'm so happy to see you here. 🎙️<br>
+            What's on your mind today? Tell me in English!
+        </div>
+    </div>
+
+    <div class="input-area">
+        <button class="mic-btn" id="micBtn">🎙️</button>
+        <button class="verify-btn" id="verifyBtn">Check Grammar ✨</button>
+        <div class="status-text" id="help-text">Tap to start speaking</div>
+    </div>
+
+    <script>
+        const body = document.body;
+        const themeToggle = document.getElementById('themeToggle');
+        const tutorName = document.getElementById('tutorName');
+        const micBtn = document.getElementById('micBtn');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const chatContainer = document.getElementById('chat-container');
+        const avatar = document.getElementById('avatar');
+
+        let recognition;
+        let isRecording = false;
+        let interimMessage; // Guarda o balão da transcrição ao vivo
+
+        // 1. Lógica do Modo Batman
+        themeToggle.onclick = () => {
+            const current = body.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', next);
+            
+            // Atualizações Artísticas do Modo
+            themeToggle.innerText = next === 'dark' ? "🦇" : "🌔";
+            tutorName.innerText = next === 'dark' ? "IA da Di 🦇" : "IA da Di ☀️";
+        };
+
+        // 2. Configurar Reconhecimento de Voz (Gratuito do Navegador)
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                // Lógica Artística de Transcrição
+                if (finalTranscript) {
+                    // Remove o balão de "interim" se ele existir
+                    if (interimMessage) { interimMessage.remove(); interimMessage = null; }
+                    addMessage(finalTranscript, 'user');
+                    verifyBtn.style.display = 'block'; // Mostra botão Verificar
+                } else if (interimTranscript) {
+                    // Cria ou atualiza o balão "interim" (estilo fantasma)
+                    if (!interimMessage) {
+                        interimMessage = addMessage(interimTranscript, 'user');
+                        interimMessage.classList.add('interim'); // Adiciona classe artística
+                    } else {
+                        interimMessage.innerText = interimTranscript;
+                    }
+                }
+            };
+        }
+
+        // 3. Funções de Chat e Botões
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            msgDiv.innerText = text;
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return msgDiv; // Retorna para podermos atualizar a interim
+        }
+
+        micBtn.onclick = () => {
+            if (!isRecording) {
+                recognition.start();
+                micBtn.classList.add('active');
+                isRecording = true;
+                verifyBtn.style.display = 'none'; // Esconde verificar se começar a falar de novo
+                document.getElementById('help-text').innerText = "I'm listening...";
+            } else {
+                recognition.stop();
+                micBtn.classList.remove('active');
+                isRecording = false;
+                document.getElementById('help-text').innerText = "Tap to speak again";
+            }
+        };
+
+        verifyBtn.onclick = () => {
+            // Arte: Simula a IA da Di pensando
+            avatar.classList.add('thinking');
+            verifyBtn.style.display = 'none';
+            document.getElementById('help-text').innerText = "Analyzing your grammar...";
+            
+            // Simulação artística de resposta (depois trocaremos pela Groq real)
+            setTimeout(() => {
+                avatar.classList.remove('thinking');
+                addMessage("That's a great start! Let me check the details for you...", 'tutor');
+                document.getElementById('help-text').innerText = "Tap to speak again";
+            }, 2000);
+        };
+    </script>
+</body>
+</html>
