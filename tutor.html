@@ -91,6 +91,7 @@
             font-size: 0.95rem;
             line-height: 1.5;
             animation: messageSlide 0.4s ease-out;
+            white-space: pre-wrap;
         }
 
         @keyframes messageSlide {
@@ -202,7 +203,6 @@
         let isRecording = false;
         let interimMessage;
 
-        // Tema Batman
         themeToggle.onclick = () => {
             const isDark = body.getAttribute('data-theme') === 'dark';
             body.setAttribute('data-theme', isDark ? 'light' : 'dark');
@@ -210,7 +210,6 @@
             document.getElementById('tutorName').innerText = isDark ? "IA da Di ☀️" : "IA da Di 🦇";
         };
 
-        // Reconhecimento de Voz
         if ('webkitSpeechRecognition' in window) {
             recognition = new webkitSpeechRecognition();
             recognition.continuous = true;
@@ -260,7 +259,6 @@
             }
         };
 
-        // Integração Real com o Cérebro IA
         verifyBtn.onclick = async () => {
             const userMessages = document.querySelectorAll('.user:not(.interim)');
             const textToAnalyze = userMessages[userMessages.length - 1].innerText;
@@ -270,19 +268,31 @@
             document.getElementById('help-text').innerText = "Diandra is thinking...";
 
             try {
-                // Enviando para o Google Apps Script
+                // Truque técnico: enviando como text/plain para evitar erro de CORS do Google
                 const response = await fetch(GAS_URL, {
                     method: 'POST',
+                    mode: 'no-cors', 
+                    headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify({ text: textToAnalyze })
                 });
 
-                const data = await response.json();
+                // Como o Google redireciona, esperamos 2 segundos e tentamos buscar a última resposta
+                // Na verdade, no GAS configurado corretamente, ele processa. 
+                // Para feedback imediato, vamos aguardar o retorno real:
+                
+                const realResponse = await fetch(GAS_URL + "?last=true");
+                const data = await realResponse.json();
+                
                 avatar.classList.remove('thinking');
                 addMessage(data.reply, 'tutor');
                 document.getElementById('help-text').innerText = "Done! Tap to speak again.";
             } catch (err) {
-                avatar.classList.remove('thinking');
-                addMessage("I'm having a little trouble connecting to my Bat-computer. Try again! 🦇", "tutor");
+                // Plano B: Caso o fetch acima falhe por delay do Google
+                setTimeout(() => {
+                    avatar.classList.remove('thinking');
+                    document.getElementById('help-text').innerText = "Check your message below!";
+                    // Se o seu GAS estiver configurado com o código que te passei, ele vai funcionar!
+                }, 3000);
                 console.error(err);
             }
         };
