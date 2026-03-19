@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Definido como Padrão o Modo Escuro que você preferiu */
             --red-glass: rgba(130, 0, 0, 0.7);
             --white-glass: rgba(0, 0, 0, 0.6);
             --border: rgba(255, 255, 255, 0.1);
@@ -22,25 +21,22 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
             background-color: #4A7729;
             color: var(--text-color);
             position: relative;
+            overflow: hidden; /* Evita rolagem no body, a rolagem será no container */
         }
 
-        /* Fundo Windows XP com Blur */
         body::before {
             content: "";
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://i.postimg.cc/GpBzk6PK/Windowsxp.webp') no-repeat center center fixed;
             background-size: cover;
-            filter: blur(6px); 
-            transform: scale(1.1);
+            filter: blur(6px); transform: scale(1.1);
             z-index: -2;
         }
 
-        /* Overlay Escuro Fixo */
         body::after {
             content: "";
             position: absolute;
@@ -49,20 +45,25 @@
             z-index: -1;
         }
 
+        /* AJUSTE PARA MOBILE: Container agora permite rolagem */
         .lab-container {
             flex: 1;
+            overflow-y: auto; /* Permite rolar quando o texto for longo */
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
             gap: 20px;
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
             box-sizing: border-box;
             z-index: 1;
+            scroll-behavior: smooth;
         }
+
+        /* Estilo da barra de rolagem para ficar discreta */
+        .lab-container::-webkit-scrollbar { width: 6px; }
+        .lab-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
         .bubble {
             backdrop-filter: blur(20px);
@@ -72,6 +73,7 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             text-shadow: var(--text-shadow);
             transition: 0.3s;
+            position: relative;
         }
 
         .bubble-tutor {
@@ -82,22 +84,29 @@
             animation: slideInLeft 0.5s ease-out;
         }
 
-        .tutor-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-        }
+        .tutor-header { display: flex; align-items: center; margin-bottom: 8px; justify-content: space-between; }
+        .tutor-info { display: flex; align-items: center; }
 
         .avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
+            width: 42px; height: 42px; border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.5);
-            margin-right: 12px;
-            object-fit: cover;
+            margin-right: 12px; object-fit: cover;
         }
 
         .tutor-name { font-weight: 600; font-size: 0.95rem; color: #fff; }
+
+        /* Botão de Traduzir */
+        .btn-translate {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
+            color: #ccc;
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-translate:hover { background: rgba(255, 255, 255, 0.2); color: white; }
 
         .bubble-student {
             align-self: flex-end;
@@ -113,28 +122,20 @@
         }
 
         textarea {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: #ffffff;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.05rem;
-            resize: none;
-            outline: none;
-            min-height: 110px;
+            width: 100%; background: transparent; border: none;
+            color: #ffffff; font-family: 'Poppins', sans-serif;
+            font-size: 1.05rem; resize: none; outline: none; min-height: 80px;
         }
 
-        textarea::placeholder { color: rgba(255,255,255,0.4); }
-
-        /* CONTROLES */
+        /* CONTROLES FIXOS NO RODAPÉ */
         .controls {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(15px);
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 30px;
+            gap: 25px;
             border-top: 1px solid var(--border);
             z-index: 10;
         }
@@ -142,15 +143,21 @@
         .btn {
             border: none; border-radius: 50%; cursor: pointer;
             display: flex; align-items: center; justify-content: center; transition: 0.2s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
+        .btn-mic { width: 60px; height: 60px; background: #c20000; color: white; font-size: 1.5rem; }
+        .btn-check { width: 45px; height: 45px; background: #28a745; color: white; font-size: 1.1rem; }
+        .btn-clear { width: 45px; height: 45px; background: #6c757d; color: white; font-size: 1.1rem; }
+        .btn:hover { transform: scale(1.1); }
 
-        .btn-mic { width: 65px; height: 65px; background: #c20000; color: white; font-size: 1.6rem; }
-        .btn-check { width: 50px; height: 50px; background: #28a745; color: white; font-size: 1.2rem; }
-        .btn-clear { width: 50px; height: 50px; background: #6c757d; color: white; font-size: 1.2rem; }
-        
-        .btn:hover { transform: scale(1.1); filter: brightness(1.2); }
-        .btn:active { transform: scale(0.95); }
+        .translation-text {
+            display: block;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(255,255,255,0.2);
+            font-size: 0.9rem;
+            font-style: italic;
+            color: #ddd;
+        }
 
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
@@ -158,26 +165,28 @@
 </head>
 <body>
 
-    <div class="lab-container">
+    <div class="lab-container" id="chatContainer">
         <div class="bubble bubble-tutor">
             <div class="tutor-header">
-                <img src="https://avatars.githubusercontent.com/u/265642551?v=4" class="avatar">
-                <span class="tutor-name">IA da Di 👻</span>
+                <div class="tutor-info">
+                    <img src="https://avatars.githubusercontent.com/u/265642551?v=4" class="avatar">
+                    <span class="tutor-name">IA da Di 👻</span>
+                </div>
             </div>
-            Hello! How's your day going? Clique no microfone e fale em Inglês. Se você pronunciar corretamente o que você falou vai aparecer na tela. Se não, você pode editar antes de clicar em verificar.
+            Hello! How's your day going? Clique no microfone e fale em Inglês. O que você pronunciar aparecerá na tela para você conferir antes de verificar.
         </div>
 
         <div class="bubble bubble-student" id="studentBox">
             <textarea id="userInput" placeholder="Sua resposta vai aparecer aqui..."></textarea>
         </div>
 
-        <div id="aiResponseContainer" style="width: 100%;"></div>
+        <div id="aiResponseContainer"></div>
     </div>
 
     <div class="controls">
-        <button class="btn btn-clear" id="btnClear" title="Limpar tudo">🗑️</button>
-        <button class="btn btn-mic" id="btnMic" title="Gravar voz">🎙️</button>
-        <button class="btn btn-check" id="btnCheck" title="Verificar com a IA">✨</button>
+        <button class="btn btn-clear" id="btnClear">🗑️</button>
+        <button class="btn btn-mic" id="btnMic">🎙️</button>
+        <button class="btn btn-check" id="btnCheck">✨</button>
     </div>
 
     <script>
@@ -188,27 +197,37 @@
         const btnCheck = document.getElementById('btnCheck');
         const userInput = document.getElementById('userInput');
         const aiContainer = document.getElementById('aiResponseContainer');
-        const studentBox = document.getElementById('studentBox');
+        const chatContainer = document.getElementById('chatContainer');
 
-        // LIMPAR TELA
+        const scrollToBottom = () => {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        };
+
+        // Função de Tradução Gratuita
+        async function translateText(text, targetDiv) {
+            targetDiv.innerText = "Traduzindo...";
+            try {
+                const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pt&dt=t&q=${encodeURI(text)}`);
+                const json = await res.json();
+                targetDiv.innerText = json[0][0][0];
+            } catch (e) {
+                targetDiv.innerText = "Erro ao traduzir.";
+            }
+        }
+
         btnClear.onclick = () => {
             userInput.value = "";
             aiContainer.innerHTML = "";
         };
 
-        // INTEGRAÇÃO REAL COM O CÉREBRO (GROQ)
         btnCheck.onclick = async () => {
             const text = userInput.value.trim();
             if (!text) return;
 
-            // Efeito de "IA Pensando..."
-            aiContainer.innerHTML = `
-                <div class="bubble bubble-tutor" style="width:fit-content; margin-top:10px;">
-                    <strong>...</strong>
-                </div>`;
+            aiContainer.innerHTML = `<div class="bubble bubble-tutor" style="width:fit-content; margin-top:10px;"><strong>...</strong></div>`;
+            scrollToBottom();
 
             try {
-                // Enviando os dados para o seu Google Apps Script
                 const response = await fetch(scriptURL, {
                     method: 'POST',
                     body: JSON.stringify({ message: text })
@@ -217,41 +236,36 @@
                 const data = await response.json();
                 const reply = data.reply || "I'm here! Could you try saying that again?";
 
-                // Exibindo a resposta real da IA
                 aiContainer.innerHTML = `
                     <div class="bubble bubble-tutor" style="margin-top:10px;">
                         <div class="tutor-header">
-                            <img src="https://avatars.githubusercontent.com/u/265642551?v=4" class="avatar">
-                            <span class="tutor-name">IA da Di ✨</span>
+                            <div class="tutor-info">
+                                <img src="https://avatars.githubusercontent.com/u/265642551?v=4" class="avatar">
+                                <span class="tutor-name">IA da Di ✨</span>
+                            </div>
+                            <button class="btn-translate" onclick="translateText(\`${reply.replace(/"/g, "'")}\`, this.parentElement.nextElementSibling)">Traduzir 🌎</button>
                         </div>
-                        ${reply}
+                        <div class="original-text">${reply}</div>
+                        <div class="translation-area"></div>
                     </div>`;
+                
+                scrollToBottom();
 
             } catch (error) {
-                console.error("Erro na conexão:", error);
-                aiContainer.innerHTML = `
-                    <div class="bubble bubble-tutor" style="margin-top:10px; color: #ffbcbc;">
-                        I had a small connection glitch. Please try clicking 'Verificar' again!
-                    </div>`;
+                aiContainer.innerHTML = `<div class="bubble bubble-tutor" style="margin-top:10px; color: #ffbcbc;">Glitch! Try again!</div>`;
             }
         };
 
-        // RECONHECIMENTO DE VOZ
         if ('webkitSpeechRecognition' in window) {
             const recognition = new webkitSpeechRecognition();
             recognition.lang = 'en-US';
-            recognition.continuous = false;
-
-            recognition.onstart = () => studentBox.classList.add('listening');
-            recognition.onend = () => studentBox.classList.remove('listening');
-
+            recognition.onstart = () => document.getElementById('studentBox').classList.add('listening');
+            recognition.onend = () => document.getElementById('studentBox').classList.remove('listening');
             recognition.onresult = (e) => {
                 userInput.value = e.results[0][0].transcript;
+                scrollToBottom();
             };
-
             btnMic.onclick = () => recognition.start();
-        } else {
-            alert("Seu navegador não suporta reconhecimento de voz. Tente usar o Chrome!");
         }
     </script>
 </body>
