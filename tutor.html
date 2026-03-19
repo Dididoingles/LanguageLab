@@ -33,13 +33,12 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: -webkit-fill-available;
-            overflow: hidden;
+            overflow: hidden; /* Importante: impede que a página inteira Role */
         }
 
-        /* HEADER ULTRA-FINO E HORIZONTAL */
+        /* HEADER COMPACTO HORIZONTAL */
         .header {
-            padding: 8px 15px;
+            padding: 10px 15px;
             display: flex;
             align-items: center;
             border-bottom: 1px solid rgba(0,0,0,0.08);
@@ -49,8 +48,8 @@
         }
 
         .profile-img {
-            width: 42px; /* Menor e alinhada */
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             border: 2px solid var(--primary);
             object-fit: cover;
@@ -67,7 +66,6 @@
             margin: 0;
             font-size: 0.95rem;
             font-weight: 600;
-            line-height: 1.2;
         }
 
         .header-info .status-text {
@@ -84,13 +82,12 @@
 
         /* CONTAINER DE CHAT COM SCROLLBAR ATIVA */
         #chat-container {
-            flex: 1;
+            flex: 1; /* O chat ocupa todo o espaço que sobra entre o topo e a base */
             overflow-y: scroll; /* Força a barra de rolagem */
             padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            padding-bottom: 140px; /* Espaço para botões */
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
@@ -109,7 +106,7 @@
             padding: 8px 14px;
             border-radius: 15px;
             font-size: 0.88rem;
-            line-height: 1.3; /* Espaçamento entre linhas reduzido */
+            line-height: 1.4;
             word-wrap: break-word;
             animation: messageSlide 0.3s ease-out;
             white-space: pre-wrap;
@@ -137,18 +134,16 @@
 
         .user.interim { opacity: 0.5; font-style: italic; }
 
-        /* ÁREA DE BOTÕES COMPACTA */
+        /* ÁREA DE BOTÕES FIXA NA BASE */
         .input-area {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
             padding: 10px 0 20px 0;
             background: var(--bg);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             border-top: 1px solid rgba(0,0,0,0.05);
+            flex-shrink: 0;
             z-index: 10;
         }
 
@@ -162,13 +157,25 @@
             font-size: 1.3rem;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(194, 0, 0, 0.2);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .mic-btn.active {
+            transform: scale(1.15);
+            background: #333;
+            animation: recording-glow 1s infinite alternate;
+        }
+
+        @keyframes recording-glow {
+            from { box-shadow: 0 0 10px var(--primary); }
+            to { box-shadow: 0 0 25px var(--primary); }
         }
 
         .verify-btn {
             background: transparent;
             border: 1.5px solid var(--primary);
             color: var(--primary);
-            padding: 5px 18px;
+            padding: 6px 20px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
@@ -191,6 +198,8 @@
 
     <div id="chat-container">
         <div class="message tutor">Hi! I'm Di's AI, I'm here to help. <br>Tell me something about you.</div>
+        <div class="message user">Hello my name is Dee and I'm trying to learn English.</div>
+        <div class="message tutor">Olá Dee, bom iniciar! "Hello" significa "olá" no inglês... (exemplo de mensagem longa para teste)</div>
     </div>
 
     <div class="input-area">
@@ -220,7 +229,7 @@
         };
 
         if ('webkitSpeechRecognition' in window) {
-            var recognition = new webkitSpeechRecognition();
+            recognition = new webkitSpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
             recognition.lang = 'en-US';
@@ -233,8 +242,14 @@
                     else interimTranscript += event.results[i][0].transcript;
                 }
                 if (finalTranscript) {
+                    if (interimMessage) { interimMessage.remove(); interimMessage = null; }
                     addMessage(finalTranscript, 'user');
                     verifyBtn.style.display = 'block';
+                } else if (interimTranscript) {
+                    if (!interimMessage) {
+                        interimMessage = addMessage(interimTranscript, 'user');
+                        interimMessage.classList.add('interim');
+                    } else { interimMessage.innerText = interimTranscript; }
                 }
                 scrollToBottom();
             };
@@ -253,35 +268,48 @@
         micBtn.onclick = () => {
             if (!isRecording) {
                 recognition.start();
-                micBtn.style.background = "#333";
+                micBtn.classList.add('active');
                 isRecording = true;
+                verifyBtn.style.display = 'none';
             } else {
                 recognition.stop();
-                micBtn.style.background = "var(--primary)";
+                micBtn.classList.remove('active');
                 isRecording = false;
             }
         };
 
         verifyBtn.onclick = async () => {
-            const userMessages = document.querySelectorAll('.user');
+            const userMessages = document.querySelectorAll('.user:not(.interim)');
             const textToAnalyze = userMessages[userMessages.length - 1].innerText;
             
-            avatar.style.boxShadow = "0 0 10px var(--primary)";
+            avatar.classList.add('thinking');
+            verifyBtn.style.display = 'none';
             document.getElementById('help-text').innerText = "thinking...";
 
             try {
-                await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ text: textToAnalyze }) });
-                
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    body: JSON.stringify({ text: textToAnalyze })
+                });
+
                 setTimeout(async () => {
-                    const res = await fetch(GAS_URL + "?cb=" + Date.now());
-                    const data = await res.json();
-                    avatar.style.boxShadow = "none";
-                    addMessage(data.reply, 'tutor');
-                    document.getElementById('help-text').innerText = "Done!";
+                    try {
+                        const res = await fetch(GAS_URL + "?cb=" + Date.now());
+                        const data = await res.json();
+                        
+                        avatar.classList.remove('thinking');
+                        addMessage(data.reply, 'tutor');
+                        document.getElementById('help-text').innerText = "Done! Tap to speak again.";
+                    } catch (e) {
+                        avatar.classList.remove('thinking');
+                        addMessage("Keep going, you're doing great! ✨🍎", 'tutor');
+                    }
                 }, 4000);
-            } catch (e) {
-                avatar.style.boxShadow = "none";
-                addMessage("Keep going, you're doing great! ✨", 'tutor');
+
+            } catch (err) {
+                avatar.classList.remove('thinking');
+                addMessage("Oops! The Bat-connection failed. Try again! 🦇", "tutor");
             }
         };
     </script>
