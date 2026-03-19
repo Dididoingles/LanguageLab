@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Speaking Lab - Tutor IA 🦇</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
@@ -12,7 +12,7 @@
             --text: #333;
             --glass-bg: rgba(194, 0, 0, 0.08);
             --glass-border: rgba(194, 0, 0, 0.15);
-            --glass-blur: blur(10px);
+            --glass-blur: blur(12px);
             --chat-user: #f0f0f0;
         }
 
@@ -21,7 +21,7 @@
             --text: #ffffff;
             --glass-bg: rgba(194, 0, 0, 0.2);
             --glass-border: rgba(194, 0, 0, 0.3);
-            --glass-blur: blur(15px);
+            --glass-blur: blur(18px);
             --chat-user: #2d2d2d;
         }
 
@@ -33,6 +33,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            height: -webkit-fill-available;
             transition: 0.3s;
             overflow: hidden;
         }
@@ -47,17 +48,15 @@
         }
 
         .header {
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             border-bottom: 1px solid rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-shrink: 0;
         }
 
         .profile-img {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             border: 3px solid var(--primary);
             object-fit: cover;
@@ -69,7 +68,7 @@
         }
 
         @keyframes pulse-border {
-            0% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0.7); }
+            0% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0.6); }
             70% { box-shadow: 0 0 0 15px rgba(194, 0, 0, 0); }
             100% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0); }
         }
@@ -81,21 +80,25 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            padding-bottom: 160px;
+            /* Espaço extra no final para os botões não cobrirem o texto */
+            padding-bottom: 180px; 
+            scroll-behavior: smooth;
         }
 
         .message {
             max-width: 85%;
-            padding: 14px 20px;
-            border-radius: 20px;
+            padding: 12px 18px;
+            border-radius: 18px;
             font-size: 0.95rem;
-            line-height: 1.5;
-            animation: messageSlide 0.4s ease-out;
+            line-height: 1.6;
+            word-wrap: break-word; /* Evita que o texto saia do balão */
+            animation: messageSlide 0.3s ease-out;
             white-space: pre-wrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
 
         @keyframes messageSlide {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -112,6 +115,7 @@
             align-self: flex-end;
             background: var(--chat-user);
             border-bottom-right-radius: 4px;
+            color: var(--text);
         }
 
         .user.interim { opacity: 0.5; font-style: italic; }
@@ -120,30 +124,32 @@
             position: fixed;
             bottom: 0;
             width: 100%;
-            padding: 20px 0;
+            padding: 15px 0 30px 0;
             background: var(--bg);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             border-top: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.02);
+            z-index: 10;
         }
 
         .mic-btn {
-            width: 70px;
-            height: 70px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
             border: none;
             background: var(--primary);
             color: white;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(194, 0, 0, 0.3);
-            transition: 0.3s;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .mic-btn.active {
-            transform: scale(1.1);
+            transform: scale(1.15);
             background: #333;
             animation: recording-glow 1s infinite alternate;
         }
@@ -157,14 +163,17 @@
             background: transparent;
             border: 2px solid var(--primary);
             color: var(--primary);
-            padding: 8px 25px;
-            border-radius: 25px;
+            padding: 10px 30px;
+            border-radius: 30px;
             font-weight: 600;
             cursor: pointer;
             display: none;
+            transition: 0.3s;
         }
 
-        .status-text { font-size: 0.8rem; opacity: 0.6; }
+        .verify-btn:active { transform: scale(0.95); }
+
+        .status-text { font-size: 0.75rem; opacity: 0.6; font-weight: 400; }
     </style>
 </head>
 <body data-theme="light">
@@ -173,7 +182,7 @@
 
     <div class="header">
         <img src="https://images2.imgbox.com/c7/11/oVauFv1e_o.png" class="profile-img" id="avatar" alt="IA da Di">
-        <h2 id="tutorName" style="margin: 10px 0 5px 0; font-size: 1.2rem;">IA da Di ☀️</h2>
+        <h2 id="tutorName" style="margin: 8px 0 2px 0; font-size: 1.1rem; font-weight: 600;">IA da Di ☀️</h2>
         <p class="status-text">Your English Lab is active.</p>
     </div>
 
@@ -191,9 +200,7 @@
     </div>
 
     <script>
-        // SEU LINK NOVO AQUI
         const GAS_URL = "https://script.google.com/macros/s/AKfycbyQFufk6NphokU1ciNCD7JRKQRAVNVhB9R3xwPV9q_Ljxs_TVcYvSJRCWQSlkJh0W09/exec";
-        
         const body = document.body;
         const themeToggle = document.getElementById('themeToggle');
         const micBtn = document.getElementById('micBtn');
@@ -234,7 +241,10 @@
                     if (!interimMessage) {
                         interimMessage = addMessage(interimTranscript, 'user');
                         interimMessage.classList.add('interim');
-                    } else { interimMessage.innerText = interimTranscript; }
+                    } else { 
+                        interimMessage.innerText = interimTranscript;
+                        scrollToBottom();
+                    }
                 }
             };
         }
@@ -244,8 +254,12 @@
             msgDiv.className = `message ${sender}`;
             msgDiv.innerText = text;
             chatContainer.appendChild(msgDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            scrollToBottom();
             return msgDiv;
+        }
+
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         micBtn.onclick = () => {
@@ -261,7 +275,6 @@
             }
         };
 
-        // ESTRATÉGIA DE ENVIO E BUSCA (CAÇADORA DE RESPOSTAS)
         verifyBtn.onclick = async () => {
             const userMessages = document.querySelectorAll('.user:not(.interim)');
             if (userMessages.length === 0) return;
@@ -272,17 +285,17 @@
             document.getElementById('help-text').innerText = "Diandra is thinking...";
 
             try {
-                // 1. Envia (POST) sem esperar resposta direta
+                // Envio para o Google
                 await fetch(GAS_URL, {
                     method: 'POST',
                     mode: 'no-cors', 
                     body: JSON.stringify({ text: textToAnalyze })
                 });
 
-                // 2. Espera 4 segundos e busca (GET) a resposta que ficou no Cache
+                // Busca a resposta após processamento
                 setTimeout(async () => {
                     try {
-                        const res = await fetch(GAS_URL + "?cache_buster=" + new Date().getTime());
+                        const res = await fetch(GAS_URL + "?cb=" + Date.now());
                         const data = await res.json();
                         
                         avatar.classList.remove('thinking');
@@ -290,15 +303,13 @@
                         document.getElementById('help-text').innerText = "Done! Tap to speak again.";
                     } catch (e) {
                         avatar.classList.remove('thinking');
-                        addMessage("I'm having a little trouble reading my notes. Try clicking check one more time! ✨🍎", 'tutor');
-                        console.error("Erro no GET:", e);
+                        addMessage("Keep going, you're doing great! ✨ (Tente falar mais uma frase)", 'tutor');
                     }
                 }, 4000);
 
             } catch (err) {
                 avatar.classList.remove('thinking');
-                addMessage("Oops! My Bat-connection failed. 🦇", "tutor");
-                console.error("Erro no POST:", err);
+                addMessage("Oops! The connection failed. 🦇", "tutor");
             }
         };
     </script>
