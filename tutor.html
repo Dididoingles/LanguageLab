@@ -7,15 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --red-glass: rgba(194, 0, 0, 0.5);
-            --white-glass: rgba(255, 255, 255, 0.25);
-            --border: rgba(255, 255, 255, 0.3);
-            --text-color: #222222; 
-            --text-shadow: 0 1px 2px rgba(255,255,255,0.8);
-            --bg-overlay: transparent;
-        }
-
-        [data-theme="dark"] {
+            /* Definido como Padrão o Modo Escuro que você preferiu */
             --red-glass: rgba(130, 0, 0, 0.7);
             --white-glass: rgba(0, 0, 0, 0.6);
             --border: rgba(255, 255, 255, 0.1);
@@ -33,26 +25,28 @@
             overflow: hidden;
             background-color: #4A7729;
             color: var(--text-color);
+            position: relative;
         }
 
+        /* Fundo Windows XP com Blur */
         body::before {
             content: "";
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://i.postimg.cc/GpBzk6PK/Windowsxp.webp') no-repeat center center fixed;
             background-size: cover;
-            filter: blur(6px); /* Blur para esconder baixa qualidade */
+            filter: blur(6px); 
             transform: scale(1.1);
             z-index: -2;
         }
 
+        /* Overlay Escuro Fixo */
         body::after {
             content: "";
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-overlay);
             z-index: -1;
-            transition: 0.4s;
         }
 
         .lab-container {
@@ -67,6 +61,7 @@
             margin: 0 auto;
             width: 100%;
             box-sizing: border-box;
+            z-index: 1;
         }
 
         .bubble {
@@ -74,7 +69,7 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
             padding: 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             text-shadow: var(--text-shadow);
             transition: 0.3s;
         }
@@ -94,15 +89,15 @@
         }
 
         .avatar {
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            border: 2px solid white;
+            border: 2px solid rgba(255,255,255,0.5);
             margin-right: 12px;
             object-fit: cover;
         }
 
-        .tutor-name { font-weight: 600; font-size: 0.95rem; }
+        .tutor-name { font-weight: 600; font-size: 0.95rem; color: #fff; }
 
         .bubble-student {
             align-self: flex-end;
@@ -114,14 +109,14 @@
 
         .bubble-student.listening {
             border: 2px solid rgba(255,255,255,0.8);
-            box-shadow: 0 0 20px rgba(194, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(194, 0, 0, 0.8);
         }
 
         textarea {
             width: 100%;
             background: transparent;
             border: none;
-            color: var(--text-color);
+            color: #ffffff;
             font-family: 'Poppins', sans-serif;
             font-size: 1.05rem;
             resize: none;
@@ -129,43 +124,47 @@
             min-height: 110px;
         }
 
+        textarea::placeholder { color: rgba(255,255,255,0.4); }
+
         /* CONTROLES */
         .controls {
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(15px);
-            padding: 15px;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 25px;
+            gap: 30px;
             border-top: 1px solid var(--border);
+            z-index: 10;
         }
 
         .btn {
             border: none; border-radius: 50%; cursor: pointer;
             display: flex; align-items: center; justify-content: center; transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         .btn-mic { width: 65px; height: 65px; background: #c20000; color: white; font-size: 1.6rem; }
         .btn-check { width: 50px; height: 50px; background: #28a745; color: white; font-size: 1.2rem; }
         .btn-clear { width: 50px; height: 50px; background: #6c757d; color: white; font-size: 1.2rem; }
+        
         .btn:hover { transform: scale(1.1); filter: brightness(1.2); }
-
-        .theme-switch { position: absolute; right: 20px; background: none; border: none; font-size: 1.4rem; cursor: pointer; }
+        .btn:active { transform: scale(0.95); }
 
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
     </style>
 </head>
-<body data-theme="light">
+<body>
 
     <div class="lab-container">
         <div class="bubble bubble-tutor">
             <div class="tutor-header">
                 <img src="https://avatars.githubusercontent.com/u/265642551?v=4" class="avatar">
-                <span class="tutor-name">IA da Di ☀️</span>
+                <span class="tutor-name">IA da Di 🦇</span>
             </div>
-            Hello! How's your day going? Clique no microfone e fale em Inglês. Se o texto for o que você falou, parabéns! Se não, você pode editar. Depois clique em verificar.
+            Hello! How's your day going? Clique no microfone e fale em Inglês. Se o texto estiver correto, parabéns! Se não, você pode editar antes de clicar em verificar.
         </div>
 
         <div class="bubble bubble-student" id="studentBox">
@@ -176,10 +175,9 @@
     </div>
 
     <div class="controls">
-        <button class="btn btn-clear" id="btnClear">🗑️</button>
-        <button class="btn btn-mic" id="btnMic">🎙️</button>
-        <button class="btn btn-check" id="btnCheck">✨</button>
-        <button class="theme-switch" id="themeToggle">🌔</button>
+        <button class="btn btn-clear" id="btnClear" title="Limpar tudo">🗑️</button>
+        <button class="btn btn-mic" id="btnMic" title="Gravar voz">🎙️</button>
+        <button class="btn btn-check" id="btnCheck" title="Verificar com a IA">✨</button>
     </div>
 
     <script>
@@ -192,64 +190,68 @@
         const aiContainer = document.getElementById('aiResponseContainer');
         const studentBox = document.getElementById('studentBox');
 
-        // MODO NOTURNO
-        document.getElementById('themeToggle').onclick = () => {
-            const body = document.body;
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            document.getElementById('themeToggle').innerText = isDark ? "🌔" : "🦇";
-            document.querySelector('.tutor-name').innerText = isDark ? "IA da Di ☀️" : "IA da Di 🦇";
-        };
-
-        // BOTÃO LIMPAR
+        // LIMPAR TELA
         btnClear.onclick = () => {
             userInput.value = "";
             aiContainer.innerHTML = "";
         };
 
-        // ENVIAR PARA IA
+        // INTEGRAÇÃO REAL COM O CÉREBRO (GROQ)
         btnCheck.onclick = async () => {
             const text = userInput.value.trim();
             if (!text) return;
 
-            // Mostrar "digitando"
-            aiContainer.innerHTML = `<div class="bubble bubble-tutor" style="width:fit-content; margin-top:10px;"><strong>...</strong></div>`;
+            // Efeito de "IA Pensando..."
+            aiContainer.innerHTML = `
+                <div class="bubble bubble-tutor" style="width:fit-content; margin-top:10px;">
+                    <strong>...</strong>
+                </div>`;
 
             try {
+                // Enviando os dados para o seu Google Apps Script
                 const response = await fetch(scriptURL, {
                     method: 'POST',
-                    mode: 'no-cors', // Importante para o Google Apps Script
                     body: JSON.stringify({ message: text })
                 });
 
-                // Como o Apps Script com no-cors não retorna o corpo da resposta diretamente no fetch, 
-                // geralmente usamos JSONP ou aguardamos. Aqui vamos simular o retorno enquanto a conexão é validada.
-                // Para feedback real instantâneo, certifique-se que o Script aceita parâmetros GET ou mude para 'cors' se configurado.
-                
-                setTimeout(() => {
-                    aiContainer.innerHTML = `
-                        <div class="bubble bubble-tutor" style="margin-top:10px;">
-                            <div class="tutor-header">
-                                <img src="https://avatars.githubusercontent.com/u/265642551?v=4" class="avatar">
-                                <span class="tutor-name">IA da Di ✨</span>
-                            </div>
-                            Verificamos sua frase! Continue assim. (Nota: Verifique se o seu Script está retornando o JSON corretamente para exibição completa).
-                        </div>`;
-                }, 1500);
+                const data = await response.json();
+                const reply = data.reply || "I'm here! Could you try saying that again?";
+
+                // Exibindo a resposta real da IA
+                aiContainer.innerHTML = `
+                    <div class="bubble bubble-tutor" style="margin-top:10px;">
+                        <div class="tutor-header">
+                            <img src="https://avatars.githubusercontent.com/u/265642551?v=4" class="avatar">
+                            <span class="tutor-name">IA da Di ✨</span>
+                        </div>
+                        ${reply}
+                    </div>`;
 
             } catch (error) {
-                aiContainer.innerHTML = `<div class="bubble bubble-tutor" style="margin-top:10px;">Oops! Tivemos um erro na conexão.</div>`;
+                console.error("Erro na conexão:", error);
+                aiContainer.innerHTML = `
+                    <div class="bubble bubble-tutor" style="margin-top:10px; color: #ffbcbc;">
+                        I had a small connection glitch. Please try clicking 'Verificar' again!
+                    </div>`;
             }
         };
 
-        // VOZ
+        // RECONHECIMENTO DE VOZ
         if ('webkitSpeechRecognition' in window) {
             const recognition = new webkitSpeechRecognition();
             recognition.lang = 'en-US';
+            recognition.continuous = false;
+
             recognition.onstart = () => studentBox.classList.add('listening');
             recognition.onend = () => studentBox.classList.remove('listening');
-            recognition.onresult = (e) => userInput.value = e.results[0][0].transcript;
+
+            recognition.onresult = (e) => {
+                userInput.value = e.results[0][0].transcript;
+            };
+
             btnMic.onclick = () => recognition.start();
+        } else {
+            alert("Seu navegador não suporta reconhecimento de voz. Tente usar o Chrome!");
         }
     </script>
 </body>
