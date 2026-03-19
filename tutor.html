@@ -34,71 +34,89 @@
             flex-direction: column;
             height: 100vh;
             height: -webkit-fill-available;
-            transition: 0.3s;
             overflow: hidden;
         }
 
-        .theme-switch {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            cursor: pointer;
-            font-size: 1.5rem;
+        /* HEADER ULTRA-FINO E HORIZONTAL */
+        .header {
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            background: var(--bg);
+            flex-shrink: 0;
             z-index: 100;
         }
 
-        .header {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            flex-shrink: 0;
-        }
-
         .profile-img {
-            width: 70px;
-            height: 70px;
+            width: 42px; /* Menor e alinhada */
+            height: 42px;
             border-radius: 50%;
-            border: 3px solid var(--primary);
+            border: 2px solid var(--primary);
             object-fit: cover;
-            transition: 0.3s;
+            margin-right: 12px;
         }
 
-        .profile-img.thinking {
-            animation: pulse-border 1.5s infinite;
-        }
-
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0.6); }
-            70% { box-shadow: 0 0 0 15px rgba(194, 0, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(194, 0, 0, 0); }
-        }
-
-        #chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
+        .header-info {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            /* Espaço extra no final para os botões não cobrirem o texto */
-            padding-bottom: 180px; 
+            flex-grow: 1;
+        }
+
+        .header-info h2 {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .header-info .status-text {
+            margin: 0;
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
+        .theme-switch {
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+
+        /* CONTAINER DE CHAT COM SCROLLBAR ATIVA */
+        #chat-container {
+            flex: 1;
+            overflow-y: scroll; /* Força a barra de rolagem */
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-bottom: 140px; /* Espaço para botões */
             scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Estilização da barra de rolagem (Chrome/Safari) */
+        #chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chat-container::-webkit-scrollbar-thumb {
+            background: rgba(194, 0, 0, 0.3);
+            border-radius: 10px;
         }
 
         .message {
             max-width: 85%;
-            padding: 12px 18px;
-            border-radius: 18px;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            word-wrap: break-word; /* Evita que o texto saia do balão */
+            padding: 8px 14px;
+            border-radius: 15px;
+            font-size: 0.88rem;
+            line-height: 1.3; /* Espaçamento entre linhas reduzido */
+            word-wrap: break-word;
             animation: messageSlide 0.3s ease-out;
             white-space: pre-wrap;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
 
         @keyframes messageSlide {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -115,88 +133,70 @@
             align-self: flex-end;
             background: var(--chat-user);
             border-bottom-right-radius: 4px;
-            color: var(--text);
         }
 
         .user.interim { opacity: 0.5; font-style: italic; }
 
+        /* ÁREA DE BOTÕES COMPACTA */
         .input-area {
             position: fixed;
             bottom: 0;
             width: 100%;
-            padding: 15px 0 30px 0;
+            padding: 10px 0 20px 0;
             background: var(--bg);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 6px;
             border-top: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.02);
             z-index: 10;
         }
 
         .mic-btn {
-            width: 65px;
-            height: 65px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             border: none;
             background: var(--primary);
             color: white;
-            font-size: 1.6rem;
+            font-size: 1.3rem;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(194, 0, 0, 0.3);
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .mic-btn.active {
-            transform: scale(1.15);
-            background: #333;
-            animation: recording-glow 1s infinite alternate;
-        }
-
-        @keyframes recording-glow {
-            from { box-shadow: 0 0 10px var(--primary); }
-            to { box-shadow: 0 0 25px var(--primary); }
+            box-shadow: 0 4px 10px rgba(194, 0, 0, 0.2);
         }
 
         .verify-btn {
             background: transparent;
-            border: 2px solid var(--primary);
+            border: 1.5px solid var(--primary);
             color: var(--primary);
-            padding: 10px 30px;
-            border-radius: 30px;
+            padding: 5px 18px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 600;
-            cursor: pointer;
             display: none;
-            transition: 0.3s;
         }
 
-        .verify-btn:active { transform: scale(0.95); }
-
-        .status-text { font-size: 0.75rem; opacity: 0.6; font-weight: 400; }
+        .status-msg { font-size: 0.65rem; opacity: 0.5; }
     </style>
 </head>
 <body data-theme="light">
 
-    <div class="theme-switch" id="themeToggle">🌔</div>
-
     <div class="header">
         <img src="https://images2.imgbox.com/c7/11/oVauFv1e_o.png" class="profile-img" id="avatar" alt="IA da Di">
-        <h2 id="tutorName" style="margin: 8px 0 2px 0; font-size: 1.1rem; font-weight: 600;">IA da Di ☀️</h2>
-        <p class="status-text">Practice your speaking</p>
+        <div class="header-info">
+            <h2 id="tutorName">IA da Di ☀️</h2>
+            <p class="status-text">Practice your speaking</p>
+        </div>
+        <div class="theme-switch" id="themeToggle">🌔</div>
     </div>
 
     <div id="chat-container">
-        <div class="message tutor">
-        Hi! I'm Di's AI, I'm here to help. <br>
-        Tell me something about you. 
-        </div>
+        <div class="message tutor">Hi! I'm Di's AI, I'm here to help. <br>Tell me something about you.</div>
     </div>
 
     <div class="input-area">
         <button class="mic-btn" id="micBtn">🎙️</button>
         <button class="verify-btn" id="verifyBtn">Check Grammar ✨</button>
-        <div class="status-text" id="help-text">Tap to speak</div>
+        <div class="status-msg" id="help-text">Tap to speak</div>
     </div>
 
     <script>
@@ -208,9 +208,9 @@
         const chatContainer = document.getElementById('chat-container');
         const avatar = document.getElementById('avatar');
 
-        let recognition;
-        let isRecording = false;
-        let interimMessage;
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
 
         themeToggle.onclick = () => {
             const isDark = body.getAttribute('data-theme') === 'dark';
@@ -220,7 +220,7 @@
         };
 
         if ('webkitSpeechRecognition' in window) {
-            recognition = new webkitSpeechRecognition();
+            var recognition = new webkitSpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
             recognition.lang = 'en-US';
@@ -232,20 +232,11 @@
                     if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript;
                     else interimTranscript += event.results[i][0].transcript;
                 }
-
                 if (finalTranscript) {
-                    if (interimMessage) { interimMessage.remove(); interimMessage = null; }
                     addMessage(finalTranscript, 'user');
                     verifyBtn.style.display = 'block';
-                } else if (interimTranscript) {
-                    if (!interimMessage) {
-                        interimMessage = addMessage(interimTranscript, 'user');
-                        interimMessage.classList.add('interim');
-                    } else { 
-                        interimMessage.innerText = interimTranscript;
-                        scrollToBottom();
-                    }
                 }
+                scrollToBottom();
             };
         }
 
@@ -258,58 +249,39 @@
             return msgDiv;
         }
 
-        function scrollToBottom() {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
+        let isRecording = false;
         micBtn.onclick = () => {
             if (!isRecording) {
                 recognition.start();
-                micBtn.classList.add('active');
+                micBtn.style.background = "#333";
                 isRecording = true;
-                verifyBtn.style.display = 'none';
             } else {
                 recognition.stop();
-                micBtn.classList.remove('active');
+                micBtn.style.background = "var(--primary)";
                 isRecording = false;
             }
         };
 
         verifyBtn.onclick = async () => {
-            const userMessages = document.querySelectorAll('.user:not(.interim)');
-            if (userMessages.length === 0) return;
+            const userMessages = document.querySelectorAll('.user');
             const textToAnalyze = userMessages[userMessages.length - 1].innerText;
-
-            avatar.classList.add('thinking');
-            verifyBtn.style.display = 'none';
+            
+            avatar.style.boxShadow = "0 0 10px var(--primary)";
             document.getElementById('help-text').innerText = "thinking...";
 
             try {
-                // Envio para o Google
-                await fetch(GAS_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', 
-                    body: JSON.stringify({ text: textToAnalyze })
-                });
-
-                // Busca a resposta após processamento
+                await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ text: textToAnalyze }) });
+                
                 setTimeout(async () => {
-                    try {
-                        const res = await fetch(GAS_URL + "?cb=" + Date.now());
-                        const data = await res.json();
-                        
-                        avatar.classList.remove('thinking');
-                        addMessage(data.reply, 'tutor');
-                        document.getElementById('help-text').innerText = "Done! Tap to speak again.";
-                    } catch (e) {
-                        avatar.classList.remove('thinking');
-                        addMessage("Keep going, you're doing great! ✨ (Tente falar mais uma frase)", 'tutor');
-                    }
+                    const res = await fetch(GAS_URL + "?cb=" + Date.now());
+                    const data = await res.json();
+                    avatar.style.boxShadow = "none";
+                    addMessage(data.reply, 'tutor');
+                    document.getElementById('help-text').innerText = "Done!";
                 }, 4000);
-
-            } catch (err) {
-                avatar.classList.remove('thinking');
-                addMessage("Oops! The connection failed. 🦇", "tutor");
+            } catch (e) {
+                avatar.style.boxShadow = "none";
+                addMessage("Keep going, you're doing great! ✨", 'tutor');
             }
         };
     </script>
