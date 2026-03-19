@@ -191,7 +191,9 @@
     </div>
 
     <script>
+        // SEU LINK NOVO AQUI
         const GAS_URL = "https://script.google.com/macros/s/AKfycbyQFufk6NphokU1ciNCD7JRKQRAVNVhB9R3xwPV9q_Ljxs_TVcYvSJRCWQSlkJh0W09/exec";
+        
         const body = document.body;
         const themeToggle = document.getElementById('themeToggle');
         const micBtn = document.getElementById('micBtn');
@@ -259,7 +261,7 @@
             }
         };
 
-        // Integração blindada para o Tutor Amigável 🍎
+        // ESTRATÉGIA DE ENVIO E BUSCA (CAÇADORA DE RESPOSTAS)
         verifyBtn.onclick = async () => {
             const userMessages = document.querySelectorAll('.user:not(.interim)');
             if (userMessages.length === 0) return;
@@ -270,37 +272,33 @@
             document.getElementById('help-text').innerText = "Diandra is thinking...";
 
             try {
-                // Truque final: enviando os dados e aguardando a resposta processada
-                const response = await fetch(GAS_URL, {
+                // 1. Envia (POST) sem esperar resposta direta
+                await fetch(GAS_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // Fundamental para o Google Apps Script
-                    headers: { 'Content-Type': 'text/plain' },
+                    mode: 'no-cors', 
                     body: JSON.stringify({ text: textToAnalyze })
                 });
 
-                // Como usamos no-cors, o navegador não deixa ler o JSON direto no POST.
-                // Mas o Google processa! Então esperamos 3 segundos e pedimos a resposta.
+                // 2. Espera 4 segundos e busca (GET) a resposta que ficou no Cache
                 setTimeout(async () => {
                     try {
-                        const realRes = await fetch(GAS_URL);
-                        const data = await realRes.json();
+                        const res = await fetch(GAS_URL + "?cache_buster=" + new Date().getTime());
+                        const data = await res.json();
                         
                         avatar.classList.remove('thinking');
-                        if (data.reply) {
-                            addMessage(data.reply, 'tutor');
-                        } else {
-                            addMessage("I'm still thinking! Click check grammar once more. ✨", 'tutor');
-                        }
+                        addMessage(data.reply, 'tutor');
                         document.getElementById('help-text').innerText = "Done! Tap to speak again.";
                     } catch (e) {
                         avatar.classList.remove('thinking');
-                        addMessage("Continue assim, você está indo muito bem! ✨ (Tente falar mais uma frase!)", 'tutor');
+                        addMessage("I'm having a little trouble reading my notes. Try clicking check one more time! ✨🍎", 'tutor');
+                        console.error("Erro no GET:", e);
                     }
-                }, 3000);
+                }, 4000);
 
             } catch (err) {
                 avatar.classList.remove('thinking');
-                addMessage("Oops! The Bat-connection failed. Try again! 🦇", "tutor");
+                addMessage("Oops! My Bat-connection failed. 🦇", "tutor");
+                console.error("Erro no POST:", err);
             }
         };
     </script>
