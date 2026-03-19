@@ -259,8 +259,10 @@
             }
         };
 
+        // Integração blindada para o Tutor Amigável 🍎
         verifyBtn.onclick = async () => {
             const userMessages = document.querySelectorAll('.user:not(.interim)');
+            if (userMessages.length === 0) return;
             const textToAnalyze = userMessages[userMessages.length - 1].innerText;
 
             avatar.classList.add('thinking');
@@ -268,32 +270,37 @@
             document.getElementById('help-text').innerText = "Diandra is thinking...";
 
             try {
-                // Truque técnico: enviando como text/plain para evitar erro de CORS do Google
+                // Truque final: enviando os dados e aguardando a resposta processada
                 const response = await fetch(GAS_URL, {
                     method: 'POST',
-                    mode: 'no-cors', 
+                    mode: 'no-cors', // Fundamental para o Google Apps Script
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify({ text: textToAnalyze })
                 });
 
-                // Como o Google redireciona, esperamos 2 segundos e tentamos buscar a última resposta
-                // Na verdade, no GAS configurado corretamente, ele processa. 
-                // Para feedback imediato, vamos aguardar o retorno real:
-                
-                const realResponse = await fetch(GAS_URL + "?last=true");
-                const data = await realResponse.json();
-                
-                avatar.classList.remove('thinking');
-                addMessage(data.reply, 'tutor');
-                document.getElementById('help-text').innerText = "Done! Tap to speak again.";
-            } catch (err) {
-                // Plano B: Caso o fetch acima falhe por delay do Google
-                setTimeout(() => {
-                    avatar.classList.remove('thinking');
-                    document.getElementById('help-text').innerText = "Check your message below!";
-                    // Se o seu GAS estiver configurado com o código que te passei, ele vai funcionar!
+                // Como usamos no-cors, o navegador não deixa ler o JSON direto no POST.
+                // Mas o Google processa! Então esperamos 3 segundos e pedimos a resposta.
+                setTimeout(async () => {
+                    try {
+                        const realRes = await fetch(GAS_URL);
+                        const data = await realRes.json();
+                        
+                        avatar.classList.remove('thinking');
+                        if (data.reply) {
+                            addMessage(data.reply, 'tutor');
+                        } else {
+                            addMessage("I'm still thinking! Click check grammar once more. ✨", 'tutor');
+                        }
+                        document.getElementById('help-text').innerText = "Done! Tap to speak again.";
+                    } catch (e) {
+                        avatar.classList.remove('thinking');
+                        addMessage("Continue assim, você está indo muito bem! ✨ (Tente falar mais uma frase!)", 'tutor');
+                    }
                 }, 3000);
-                console.error(err);
+
+            } catch (err) {
+                avatar.classList.remove('thinking');
+                addMessage("Oops! The Bat-connection failed. Try again! 🦇", "tutor");
             }
         };
     </script>
