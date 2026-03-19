@@ -3,314 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Speaking Lab - Tutor IA 🦇</title>
+    <title>Speaking Lab - Interface Fixa 🎙️</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #c20000;
-            --bg: #fdfdfd;
-            --text: #333;
-            --glass-bg: rgba(194, 0, 0, 0.08);
-            --glass-border: rgba(194, 0, 0, 0.15);
-            --glass-blur: blur(12px);
-            --chat-user: #f0f0f0;
-        }
-
-        [data-theme="dark"] {
-            --bg: #121212;
+            --red-glass: rgba(194, 0, 0, 0.4);
+            --white-glass: rgba(255, 255, 255, 0.15);
+            --border: rgba(255, 255, 255, 0.2);
             --text: #ffffff;
-            --glass-bg: rgba(194, 0, 0, 0.2);
-            --glass-border: rgba(194, 0, 0, 0.3);
-            --glass-blur: blur(18px);
-            --chat-user: #2d2d2d;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
             margin: 0;
-            display: flex;
-            flex-direction: column;
             height: 100vh;
-            overflow: hidden; /* Importante: impede que a página inteira Role */
+            display: flex;
+            flex-direction: column;
+            background: url('https://images2.imgbox.com/63/9d/BSa8fQyk_o.jpg') no-repeat center center fixed;
+            background-size: cover;
+            overflow: hidden;
+            color: var(--text);
         }
 
-        /* HEADER COMPACTO HORIZONTAL */
-        .header {
-            padding: 10px 15px;
+        /* CONTAINER PRINCIPAL */
+        .lab-container {
+            flex: 1;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.08);
-            background: var(--bg);
-            flex-shrink: 0;
-            z-index: 100;
+            padding: 20px;
+            gap: 20px;
+            box-sizing: border-box;
         }
 
-        .profile-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-            object-fit: cover;
-            margin-right: 12px;
-        }
-
-        .header-info {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .header-info h2 {
-            margin: 0;
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        .header-info .status-text {
-            margin: 0;
-            font-size: 0.7rem;
-            opacity: 0.6;
-        }
-
-        .theme-switch {
-            cursor: pointer;
-            font-size: 1.2rem;
-            padding: 5px;
-        }
-
-        /* CONTAINER DE CHAT COM SCROLLBAR ATIVA */
-        #chat-container {
-            flex: 1; /* O chat ocupa todo o espaço que sobra entre o topo e a base */
-            overflow-y: scroll; /* Força a barra de rolagem */
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* Estilização da barra de rolagem (Chrome/Safari) */
-        #chat-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        #chat-container::-webkit-scrollbar-thumb {
-            background: rgba(194, 0, 0, 0.3);
-            border-radius: 10px;
-        }
-
-        .message {
-            max-width: 85%;
-            padding: 8px 14px;
-            border-radius: 15px;
-            font-size: 0.88rem;
-            line-height: 1.4;
-            word-wrap: break-word;
-            animation: messageSlide 0.3s ease-out;
-            white-space: pre-wrap;
-        }
-
-        @keyframes messageSlide {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .tutor {
+        /* BOLHA DO TUTOR (ESQUERDA) */
+        .bubble-tutor {
             align-self: flex-start;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom-left-radius: 4px;
+            max-width: 400px;
+            background: var(--white-glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 20px 20px 20px 5px;
+            padding: 15px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            animation: slideInLeft 0.6s ease-out forwards;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        .user {
+        /* BOLHA DO ALUNO (DIREITA) */
+        .bubble-student {
             align-self: flex-end;
-            background: var(--chat-user);
-            border-bottom-right-radius: 4px;
+            width: 100%;
+            max-width: 450px;
+            background: var(--red-glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid transparent;
+            border-radius: 20px 20px 5px 20px;
+            padding: 15px;
+            animation: slideInRight 0.6s ease-out forwards;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(194, 0, 0, 0.2);
         }
 
-        .user.interim { opacity: 0.5; font-style: italic; }
-
-        /* ÁREA DE BOTÕES FIXA NA BASE */
-        .input-area {
-            padding: 10px 0 20px 0;
-            background: var(--bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            flex-shrink: 0;
-            z-index: 10;
+        /* Efeito de borda pulsante quando ativo */
+        .bubble-student.listening {
+            border-color: #ff4d4d;
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.6);
+            transform: scale(1.02);
         }
 
-        .mic-btn {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            border: none;
-            background: var(--primary);
-            color: white;
-            font-size: 1.3rem;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(194, 0, 0, 0.2);
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .mic-btn.active {
-            transform: scale(1.15);
-            background: #333;
-            animation: recording-glow 1s infinite alternate;
-        }
-
-        @keyframes recording-glow {
-            from { box-shadow: 0 0 10px var(--primary); }
-            to { box-shadow: 0 0 25px var(--primary); }
-        }
-
-        .verify-btn {
+        .bubble-student textarea {
+            width: 100%;
             background: transparent;
-            border: 1.5px solid var(--primary);
-            color: var(--primary);
-            padding: 6px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: none;
+            border: none;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            min-height: 100px;
         }
 
-        .status-msg { font-size: 0.65rem; opacity: 0.5; }
+        .bubble-student textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+
+        /* FEEDBACK E LOADING */
+        #feedback-area {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            min-height: 40px;
+        }
+
+        .dots { display: none; font-size: 2rem; }
+
+        /* BOTÕES FIXOS NA BASE */
+        .controls {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-mic { width: 60px; height: 60px; background: #c20000; color: white; font-size: 1.5rem; }
+        .btn-check { width: 50px; height: 50px; background: #28a745; color: white; font-size: 1.2rem; }
+        .btn-clear { width: 50px; height: 50px; background: #6c757d; color: white; font-size: 1.2rem; }
+
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+
+        /* ANIMAÇÕES */
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        
+        @media (max-width: 600px) {
+            .bubble-tutor, .bubble-student { max-width: 90%; }
+        }
     </style>
 </head>
-<body data-theme="light">
+<body>
 
-    <div class="header">
-        <img src="https://images2.imgbox.com/c7/11/oVauFv1e_o.png" class="profile-img" id="avatar" alt="IA da Di">
-        <div class="header-info">
-            <h2 id="tutorName">IA da Di ☀️</h2>
-            <p class="status-text">Practice your speaking</p>
+    <div class="lab-container">
+        <div class="bubble-tutor">
+            <strong>IA da Di ☀️</strong><br>
+            Hello! How's your day going? Clique no microfone e fale em Inglês. Se o texto for o que você falou, parabéns! Se não, você pode editar. Depois clique em verificar.
         </div>
-        <div class="theme-switch" id="themeToggle">🌔</div>
+
+        <div class="bubble-student" id="studentBox">
+            <textarea id="userInput" placeholder="Sua resposta vai aparecer aqui..."></textarea>
+        </div>
+
+        <div id="feedback-area">
+            <div class="dots" id="loading">...</div>
+            <div id="aiReply"></div>
+        </div>
     </div>
 
-    <div id="chat-container">
-        <div class="message tutor">Hi! I'm Di's AI, I'm here to help. <br>Tell me something about you.</div>
-        <div class="message user">Hello my name is Dee and I'm trying to learn English.</div>
-        <div class="message tutor">Olá Dee, bom iniciar! "Hello" significa "olá" no inglês... (exemplo de mensagem longa para teste)</div>
-    </div>
-
-    <div class="input-area">
-        <button class="mic-btn" id="micBtn">🎙️</button>
-        <button class="verify-btn" id="verifyBtn">Check Grammar ✨</button>
-        <div class="status-msg" id="help-text">Tap to speak</div>
+    <div class="controls">
+        <button class="btn btn-clear" id="btnClear" title="Limpar">🗑️</button>
+        <button class="btn btn-mic" id="btnMic" title="Falar">🎙️</button>
+        <button class="btn btn-check" id="btnCheck" title="Verificar">✨</button>
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyQFufk6NphokU1ciNCD7JRKQRAVNVhB9R3xwPV9q_Ljxs_TVcYvSJRCWQSlkJh0W09/exec";
-        const body = document.body;
-        const themeToggle = document.getElementById('themeToggle');
-        const micBtn = document.getElementById('micBtn');
-        const verifyBtn = document.getElementById('verifyBtn');
-        const chatContainer = document.getElementById('chat-container');
-        const avatar = document.getElementById('avatar');
+        const btnMic = document.getElementById('btnMic');
+        const btnClear = document.getElementById('btnClear');
+        const btnCheck = document.getElementById('btnCheck');
+        const studentBox = document.getElementById('studentBox');
+        const userInput = document.getElementById('userInput');
+        const loading = document.getElementById('loading');
+        const aiReply = document.getElementById('aiReply');
 
-        function scrollToBottom() {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+        let isRecording = false;
 
-        themeToggle.onclick = () => {
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            themeToggle.innerText = isDark ? "🌔" : "🦇";
-            document.getElementById('tutorName').innerText = isDark ? "IA da Di ☀️" : "IA da Di 🦇";
-        };
-
+        // RECONHECIMENTO DE VOZ
         if ('webkitSpeechRecognition' in window) {
-            recognition = new webkitSpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
+            const recognition = new webkitSpeechRecognition();
             recognition.lang = 'en-US';
+            recognition.continuous = false;
+
+            recognition.onstart = () => {
+                isRecording = true;
+                studentBox.classList.add('listening');
+                btnMic.style.boxShadow = "0 0 15px #ff4d4d";
+            };
 
             recognition.onresult = (event) => {
-                let interimTranscript = '';
-                let finalTranscript = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript;
-                    else interimTranscript += event.results[i][0].transcript;
-                }
-                if (finalTranscript) {
-                    if (interimMessage) { interimMessage.remove(); interimMessage = null; }
-                    addMessage(finalTranscript, 'user');
-                    verifyBtn.style.display = 'block';
-                } else if (interimTranscript) {
-                    if (!interimMessage) {
-                        interimMessage = addMessage(interimTranscript, 'user');
-                        interimMessage.classList.add('interim');
-                    } else { interimMessage.innerText = interimTranscript; }
-                }
-                scrollToBottom();
+                const text = event.results[0][0].transcript;
+                userInput.value = text;
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                studentBox.classList.remove('listening');
+                btnMic.style.boxShadow = "none";
+            };
+
+            btnMic.onclick = () => {
+                if (isRecording) recognition.stop();
+                else recognition.start();
             };
         }
 
-        function addMessage(text, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${sender}`;
-            msgDiv.innerText = text;
-            chatContainer.appendChild(msgDiv);
-            scrollToBottom();
-            return msgDiv;
-        }
-
-        let isRecording = false;
-        micBtn.onclick = () => {
-            if (!isRecording) {
-                recognition.start();
-                micBtn.classList.add('active');
-                isRecording = true;
-                verifyBtn.style.display = 'none';
-            } else {
-                recognition.stop();
-                micBtn.classList.remove('active');
-                isRecording = false;
-            }
+        // BOTÃO LIMPAR
+        btnClear.onclick = () => {
+            userInput.value = "";
+            aiReply.innerText = "";
+            aiReply.parentElement.querySelector('.bubble-tutor')?.remove(); // Remove feedback anterior se houver
         };
 
-        verifyBtn.onclick = async () => {
-            const userMessages = document.querySelectorAll('.user:not(.interim)');
-            const textToAnalyze = userMessages[userMessages.length - 1].innerText;
-            
-            avatar.classList.add('thinking');
-            verifyBtn.style.display = 'none';
-            document.getElementById('help-text').innerText = "thinking...";
+        // BOTÃO VERIFICAR (SIMULAÇÃO)
+        btnCheck.onclick = () => {
+            if (!userInput.value) return;
 
-            try {
-                await fetch(GAS_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', 
-                    body: JSON.stringify({ text: textToAnalyze })
-                });
+            loading.style.display = "block";
+            aiReply.innerText = "";
 
-                setTimeout(async () => {
-                    try {
-                        const res = await fetch(GAS_URL + "?cb=" + Date.now());
-                        const data = await res.json();
-                        
-                        avatar.classList.remove('thinking');
-                        addMessage(data.reply, 'tutor');
-                        document.getElementById('help-text').innerText = "Done! Tap to speak again.";
-                    } catch (e) {
-                        avatar.classList.remove('thinking');
-                        addMessage("Keep going, you're doing great! ✨🍎", 'tutor');
-                    }
-                }, 4000);
-
-            } catch (err) {
-                avatar.classList.remove('thinking');
-                addMessage("Oops! The Bat-connection failed. Try again! 🦇", "tutor");
-            }
+            // Simula o tempo de resposta da IA
+            setTimeout(() => {
+                loading.style.display = "none";
+                const feedback = document.createElement('div');
+                feedback.className = "bubble-tutor";
+                feedback.style.marginTop = "10px";
+                feedback.innerHTML = "<strong>IA Feedback ✨</strong><br>Great job! Your sentence is clear and grammatically correct.";
+                aiReply.appendChild(feedback);
+            }, 2000);
         };
     </script>
 </body>
