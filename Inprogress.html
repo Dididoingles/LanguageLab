@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Em Construção - dicarvalho.prof</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #c20000; /* Seu vermelho oficial */
+            --bg: #ffffff;
+            --text: #333333;
+            --sub-text: #666666;
+            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Remove o flash azul no toque do mobile */
+        }
+
+        /* ===== FLEXBOX CENTRALIZADOR MÁGICO ===== */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            /* Garante que ocupe a altura total da tela VISÍVEL */
+            min-height: 100vh;
+            min-height: 100dvh; /* Suporte para navegadores móveis modernos (Dynamic VH) */
+            
+            /* Centraliza o card verticalmente e horizontalmente */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px; /* Respiro para as bordas em telas muito pequenas */
+            text-align: center;
+        }
+
+        /* ===== CARD DE CONTEÚDO RESPONSIVO ===== */
+        .content-card {
+            background-color: #fdfdfd;
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid #eee;
+            width: 100%;
+            max-width: 480px; /* Largura máxima para desktops */
+            animation: fadeIn 0.8s ease-out;
+            
+            /* Garante que o card não fique muito alto em celulares pequenos */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .icon-container {
+            font-size: 3.5rem; /* Levemente menor para mobile */
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Animação do Martelo */
+        .builder-emoji {
+            animation: hammer 1.5s infinite ease-in-out;
+            display: inline-block;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2rem; /* Tamanho base responsivo */
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: lowercase;
+            line-height: 1.2;
+        }
+        h1::first-letter { text-transform: uppercase; }
+
+        p {
+            font-size: 1.05rem;
+            color: var(--sub-text);
+            margin-bottom: 2rem;
+            max-width: 90%;
+        }
+
+        /* ===== BOTÃO DO WHATSAPP MÓVEL ===== */
+        .whatsapp-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #25d366; /* Cor oficial do WhatsApp */
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.2);
+            
+            /* Previne que o botão quebre em telas muito estreitas */
+            white-space: nowrap;
+        }
+
+        /* Hover para desktop apenas (melhora performance mobile) */
+        @media (hover: hover) {
+            .whatsapp-link:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+                filter: brightness(1.05);
+            }
+        }
+
+        /* Estilo para quando o botão é pressionado no celular */
+        .whatsapp-link:active {
+            transform: scale(0.97);
+            filter: brightness(0.9);
+        }
+
+        /* ===== AJUSTES ESPECÍFICOS PARA TELAS MUITO PEQUENAS (MOBILE) ===== */
+        @media (max-width: 380px) {
+            .content-card {
+                padding: 30px 20px;
+            }
+            .icon-container {
+                font-size: 2.8rem;
+                gap: 10px;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
+            p {
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+            }
+            .whatsapp-link {
+                padding: 12px 22px;
+                font-size: 0.9rem;
+                gap: 8px;
+            }
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes hammer {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-25deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content-card">
+        <div class="icon-container">
+            <span>🚧</span>
+            <span class="builder-emoji">🔨</span>
+            <span>🏗️</span>
+        </div>
+        
+        <h1>página em construção</h1>
+        <p>Estamos preparando novos desafios para você. Esta seção do <strong>Language Lab</strong> estará disponível em breve!</p>
+
+        <a href="https://wa.me/5516993272278?text=Olá%20Diandra!%20Tenho%20uma%20sugestão%20para%20o%20site:" 
+           target="_blank" 
+           class="whatsapp-link">
+            <span>💡</span> deixe sua sugestão
+        </a>
+    </div>
+
+</body>
+</html>
