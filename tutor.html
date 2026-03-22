@@ -2,257 +2,43 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Speaking Lab - Diandra 🎙️</title>
+    <title>Speaking Studio 🎙️</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --red-glass: rgba(130, 0, 0, 0.7);
-            --white-glass: rgba(0, 0, 0, 0.6);
-            --border: rgba(255, 255, 255, 0.1);
-            --text-color: #ffffff;
-            --text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-            --bg-overlay: rgba(0, 0, 0, 0.6); 
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: #4A7729;
-            color: var(--text-color);
-            position: relative;
-            overflow: hidden;
-        }
-
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://i.postimg.cc/GpBzk6PK/Windowsxp.webp') no-repeat center center fixed;
-            background-size: cover;
-            filter: blur(6px); transform: scale(1.1);
-            z-index: -2;
-        }
-
-        body::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-overlay);
-            z-index: -1;
-        }
-
-        .lab-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
-            box-sizing: border-box;
-            z-index: 1;
-            scroll-behavior: smooth;
-        }
-
-        .lab-container::-webkit-scrollbar { width: 6px; }
-        .lab-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-
-        .bubble {
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            padding: 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            text-shadow: var(--text-shadow);
-            transition: 0.3s;
-            position: relative;
-        }
-
-        .bubble-tutor {
-            align-self: flex-start;
-            background: var(--white-glass);
-            border-radius: 20px 20px 20px 5px;
-            width: 90%;
-            animation: slideInLeft 0.5s ease-out;
-        }
-
-        .tutor-header { display: flex; align-items: center; margin-bottom: 8px; justify-content: space-between; }
-        .tutor-info { display: flex; align-items: center; }
-
-        .avatar {
-            width: 42px; height: 42px; border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.5);
-            margin-right: 12px; object-fit: cover;
-        }
-
-        .tutor-name { font-weight: 600; font-size: 0.95rem; color: #fff; }
-
-        .btn-translate {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--border);
-            color: #ccc;
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-translate:hover { background: rgba(255, 255, 255, 0.2); color: white; }
-
-        .bubble-student {
-            align-self: flex-end;
-            width: 90%;
-            background: var(--red-glass);
-            border-radius: 20px 20px 5px 20px;
-            animation: slideInRight 0.5s ease-out;
-        }
-
-        .bubble-student.listening {
-            border: 2px solid rgba(255,255,255,0.8);
-            box-shadow: 0 0 20px rgba(194, 0, 0, 0.8);
-        }
-
-        textarea {
-            width: 100%; background: transparent; border: none;
-            color: #ffffff; font-family: 'Poppins', sans-serif;
-            font-size: 1.05rem; resize: none; outline: none; min-height: 80px;
-        }
-
-        .controls {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(15px);
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 25px;
-            border-top: 1px solid var(--border);
-            z-index: 10;
-        }
-
-        .btn {
-            border: none; border-radius: 50%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-        .btn-mic { width: 60px; height: 60px; background: #c20000; color: white; font-size: 1.5rem; }
-        .btn-check { width: 45px; height: 45px; background: #28a745; color: white; font-size: 1.1rem; }
-        .btn-clear { width: 45px; height: 45px; background: #6c757d; color: white; font-size: 1.1rem; }
-        .btn:hover { transform: scale(1.1); }
-
-        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        body { font-family: 'Poppins', sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .instruction { font-size: 0.85rem; text-align: center; margin-bottom: 15px; color: #ccc; }
+        #textOutput { width: 100%; background: #2a2a2a; border: 1px solid #444; color: white; padding: 15px; border-radius: 10px; min-height: 100px; margin-bottom: 20px; font-family: 'Poppins'; outline: none; }
+        .mic-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: #6c757d; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; margin-bottom: 20px; }
+        .mic-btn.listening { background: #c20000; box-shadow: 0 0 20px #c20000; }
+        .submit-btn { background: #c20000; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
-
-    <div class="lab-container" id="chatContainer">
-        <div class="bubble bubble-tutor">
-            <div class="tutor-header">
-                <div class="tutor-info">
-                    <img src="https://avatars.githubusercontent.com/u/265642551?v=4" class="avatar">
-                    <span class="tutor-name">IA da Di 👻</span>
-                </div>
-            </div>
-            Hello! How's your day going? Clique no microfone e fale em Inglês. O que você pronunciar aparecerá na tela para você conferir antes de verificar.
-        </div>
-
-        <div class="bubble bubble-student" id="studentBox">
-            <textarea id="userInput" placeholder="Sua resposta vai aparecer aqui..."></textarea>
-        </div>
-
-        <div id="aiResponseContainer"></div>
-    </div>
-
-    <div class="controls">
-        <button class="btn btn-clear" id="btnClear">🗑️</button>
-        <button class="btn btn-mic" id="btnMic">🎙️</button>
-        <button class="btn btn-check" id="btnCheck">✨</button>
-    </div>
+    <div class="instruction">Foi isso mesmo que você quis dizer? Edite se necessário.</div>
+    <textarea id="textOutput" placeholder="Sua voz aparecerá aqui..."></textarea>
+    <button id="micBtn" class="mic-btn">🎙️</button>
+    <button id="submitBtn" class="submit-btn">Enviar e Verificar</button>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyQFufk6NphokU1ciNCD7JRKQRAVNVhB9R3xwPV9q_Ljxs_TVcYvSJRCWQSlkJh0W09/exec';
-        
-        const btnMic = document.getElementById('btnMic');
-        const btnClear = document.getElementById('btnClear');
-        const btnCheck = document.getElementById('btnCheck');
-        const userInput = document.getElementById('userInput');
-        const aiContainer = document.getElementById('aiResponseContainer');
-        const chatContainer = document.getElementById('chatContainer');
-
-        const scrollToBottom = () => {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        };
-
-        // Função para Alternar Tradução (Toggle)
-        function toggleLanguage(btn, original, translation) {
-            const textDiv = btn.parentElement.nextElementSibling;
-            if (textDiv.innerText === original) {
-                textDiv.innerText = translation;
-                btn.innerText = "Mostrar Original 🇬🇧";
-            } else {
-                textDiv.innerText = original;
-                btn.innerText = "Traduzir 🌎";
-            }
-        }
-
-        btnClear.onclick = () => {
-            userInput.value = "";
-            aiContainer.innerHTML = "";
-        };
-
-        btnCheck.onclick = async () => {
-            const text = userInput.value.trim();
-            if (!text) return;
-
-            aiContainer.innerHTML = `<div class="bubble bubble-tutor" style="width:fit-content; margin-top:10px;"><strong>...</strong></div>`;
-            scrollToBottom();
-
-            try {
-                const response = await fetch(scriptURL, {
-                    method: 'POST',
-                    body: JSON.stringify({ message: text })
-                });
-
-                const data = await response.json();
-                const replyEn = data.reply || "I'm here! Could you try saying that again?";
-                const replyPt = data.translation || "Tradução não disponível.";
-
-                aiContainer.innerHTML = `
-                    <div class="bubble bubble-tutor" style="margin-top:10px;">
-                        <div class="tutor-header">
-                            <div class="tutor-info">
-                                <img src="https://avatars.githubusercontent.com/u/265642551?v=4" class="avatar">
-                                <span class="tutor-name">IA da Di ✨</span>
-                            </div>
-                            <button class="btn-translate" onclick="toggleLanguage(this, \`${replyEn.replace(/`/g, "\\`").replace(/"/g, "&quot;")}\`, \`${replyPt.replace(/`/g, "\\`").replace(/"/g, "&quot;")}\`)">Traduzir 🌎</button>
-                        </div>
-                        <div class="response-text">${replyEn}</div>
-                    </div>`;
-                
-                scrollToBottom();
-
-            } catch (error) {
-                aiContainer.innerHTML = `<div class="bubble bubble-tutor" style="margin-top:10px; color: #ffbcbc;">Glitch! Try again!</div>`;
-            }
-        };
+        const micBtn = document.getElementById('micBtn');
+        const textOutput = document.getElementById('textOutput');
+        const submitBtn = document.getElementById('submitBtn');
 
         if ('webkitSpeechRecognition' in window) {
             const recognition = new webkitSpeechRecognition();
             recognition.lang = 'en-US';
-            recognition.onstart = () => document.getElementById('studentBox').classList.add('listening');
-            recognition.onend = () => document.getElementById('studentBox').classList.remove('listening');
-            recognition.onresult = (e) => {
-                userInput.value = e.results[0][0].transcript;
-                scrollToBottom();
-            };
-            btnMic.onclick = () => recognition.start();
+            recognition.onstart = () => micBtn.classList.add('listening');
+            recognition.onend = () => micBtn.classList.remove('listening');
+            recognition.onresult = (e) => { textOutput.value = e.results[0][0].transcript; };
+            micBtn.onclick = () => recognition.start();
         }
+
+        submitBtn.onclick = () => {
+            if (window.opener) {
+                window.opener.postMessage({ type: 'SPEECH_DATA', text: textOutput.value }, "*");
+                window.close(); // Closes immediately as requested [cite: 22]
+            }
+        };
     </script>
 </body>
 </html>
