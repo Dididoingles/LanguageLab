@@ -28,6 +28,16 @@
             recognition.lang = 'en-US'; // [cite: 86]
             recognition.continuous = false;
             recognition.interimResults = false;
+           
+recognition.interimResults = true;
+
+recognition.onresult = (event) => {
+    let result = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+        result += event.results[i][0].transcript;
+    }
+    textOutput.value = result;
+};
 
             recognition.onstart = () => {
                 micBtn.classList.add('listening');
