@@ -7,16 +7,19 @@
     <style>
         body { font-family: 'Poppins', sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
         .instruction { font-size: 0.85rem; text-align: center; margin-bottom: 15px; color: #ccc; }
+        /* Editable dark theme box [cite: 18, 20] */
         #textOutput { width: 100%; background: #2a2a2a; border: 1px solid #444; color: white; padding: 15px; border-radius: 10px; min-height: 120px; margin-bottom: 20px; font-family: 'Poppins'; outline: none; resize: none; font-size: 1rem; }
+        /* Mic button: Gray by default, Red when active [cite: 17, 20] */
         .mic-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: #6c757d; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
         .mic-btn.listening { background: #c20000; box-shadow: 0 0 20px #c20000; }
+        /* Submit button always red [cite: 18, 20] */
         .submit-btn { background: #c20000; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; }
         .submit-btn:hover { background: #e60000; }
     </style>
 </head>
 <body>
     <div class="instruction">
-        Foi isso mesmo que você quis dizer? Edite se necessário e clique em enviar.
+        Foi isso mesmo que você quis dizer? Se sim, clique em enviar e verificar. Se não, edite seu texto clicando sobre ele. 
     </div>
     
     <textarea id="textOutput" placeholder="Sua voz aparecerá aqui..."></textarea>
@@ -30,40 +33,40 @@
         const textOutput = document.getElementById('textOutput');
         const submitBtn = document.getElementById('submitBtn');
 
+        let isListening = false;
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
             recognition.lang = 'en-US';
             recognition.continuous = true;
-            recognition.interimResults = true;
+            recognition.interimResults = false; // Set to false so it only adds finished sentences
 
             recognition.onstart = () => {
+                isListening = true;
                 micBtn.classList.add('listening');
             };
 
             recognition.onresult = (event) => {
-                let result = "";
+                let currentTranscript = "";
                 for (let i = event.resultIndex; i < event.results.length; i++) {
-                    result += event.results[i][0].transcript;
+                    currentTranscript += event.results[i][0].transcript;
                 }
-                textOutput.value = result;
-            };
-
-            recognition.onerror = (event) => {
-                console.error("Erro no reconhecimento: ", event.error);
-                micBtn.classList.remove('listening');
+                // Append the text instead of replacing it
+                textOutput.value += (textOutput.value ? " " : "") + currentTranscript;
             };
 
             recognition.onend = () => {
+                isListening = false;
                 micBtn.classList.remove('listening');
             };
 
+            // Toggle logic: Click to start, click again to stop
             micBtn.onclick = () => {
-                try {
+                if (!isListening) {
                     recognition.start();
-                } catch (e) {
-                    console.log("Reconhecimento já está ativo.");
+                } else {
+                    recognition.stop();
                 }
             };
         } else {
@@ -73,6 +76,7 @@
         submitBtn.onclick = () => {
             const finalText = textOutput.value.trim();
             if (window.opener) {
+                // Land the text in the main page and close [cite: 22, 23]
                 window.opener.postMessage({
                     type: 'SPEECH_DATA',
                     text: finalText
