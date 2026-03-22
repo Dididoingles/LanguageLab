@@ -7,36 +7,59 @@
     <style>
         body { font-family: 'Poppins', sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
         .instruction { font-size: 0.85rem; text-align: center; margin-bottom: 15px; color: #ccc; }
-        #textOutput { width: 100%; background: #2a2a2a; border: 1px solid #444; color: white; padding: 15px; border-radius: 10px; min-height: 100px; margin-bottom: 20px; font-family: 'Poppins'; outline: none; }
-        .mic-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: #6c757d; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; margin-bottom: 20px; }
+        #textOutput { width: 100%; background: #2a2a2a; border: 1px solid #444; color: white; padding: 15px; border-radius: 10px; min-height: 100px; margin-bottom: 20px; font-family: 'Poppins'; outline: none; resize: none; }
+        .mic-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: #6c757d; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
+        /* Red color when active as requested [cite: 17, 20] */
         .mic-btn.listening { background: #c20000; box-shadow: 0 0 20px #c20000; }
-        .submit-btn { background: #c20000; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; width: 100%; }
+        .submit-btn { background: #c20000; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; }
     </style>
 </head>
 <body>
-    <div class="instruction">Foi isso mesmo que você quis dizer? Edite se necessário.</div>
+    <div class="instruction">Foi isso mesmo que você quis dizer? Edite se necessário. [cite: 19]</div>
     <textarea id="textOutput" placeholder="Sua voz aparecerá aqui..."></textarea>
     <button id="micBtn" class="mic-btn">🎙️</button>
-    <button id="submitBtn" class="submit-btn">Enviar e Verificar</button>
+    <button id="submitBtn" class="submit-btn">Enviar e Verificar [cite: 19]</button>
 
     <script>
         const micBtn = document.getElementById('micBtn');
         const textOutput = document.getElementById('textOutput');
         const submitBtn = document.getElementById('submitBtn');
 
+        // Using the Web Speech API tool from your original code 
         if ('webkitSpeechRecognition' in window) {
             const recognition = new webkitSpeechRecognition();
-            recognition.lang = 'en-US';
-            recognition.onstart = () => micBtn.classList.add('listening');
-            recognition.onend = () => micBtn.classList.remove('listening');
-            recognition.onresult = (e) => { textOutput.value = e.results[0][0].transcript; };
-            micBtn.onclick = () => recognition.start();
+            recognition.lang = 'en-US'; [cite: 86]
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                micBtn.classList.add('listening'); [cite: 17]
+            };
+
+            recognition.onresult = (e) => {
+                // Landing the result into the editable box [cite: 18, 87]
+                textOutput.value = e.results[0][0].transcript;
+            };
+
+            recognition.onend = () => {
+                micBtn.classList.remove('listening');
+            };
+
+            micBtn.onclick = () => {
+                recognition.start();
+            };
+        } else {
+            alert("Speech recognition not supported in this browser.");
         }
 
         submitBtn.onclick = () => {
+            const text = textOutput.value;
+            // Sending the data back to the main Lab [cite: 22, 23]
             if (window.opener) {
-                window.opener.postMessage({ type: 'SPEECH_DATA', text: textOutput.value }, "*");
-                window.close(); // Closes immediately as requested [cite: 22]
+                window.opener.postMessage({ type: 'SPEECH_DATA', text: text }, "*");
+                window.close(); // Immediate close as requested [cite: 22]
+            } else {
+                alert("Please open this from the English Lab page.");
             }
         };
     </script>
