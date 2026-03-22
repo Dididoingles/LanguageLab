@@ -16,14 +16,14 @@
 </head>
 <body>
     <div class="instruction">
-        Foi isso mesmo que você quis dizer? Edite se necessário e clique em enviar. [cite: 19]
+        Foi isso mesmo que você quis dizer? Edite se necessário e clique em enviar.
     </div>
     
     <textarea id="textOutput" placeholder="Sua voz aparecerá aqui..."></textarea>
     
     <button id="micBtn" class="mic-btn">🎙️</button>
     
-    <button id="submitBtn" class="submit-btn">Enviar e Verificar [cite: 18]</button>
+    <button id="submitBtn" class="submit-btn">Enviar e Verificar</button>
 
     <script>
         const micBtn = document.getElementById('micBtn');
@@ -34,12 +34,12 @@
 
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
-            recognition.lang = 'en-US'; [cite: 86]
+            recognition.lang = 'en-US';
             recognition.continuous = true;
-            recognition.interimResults = true; // Ativa resultados em tempo real
+            recognition.interimResults = true;
 
             recognition.onstart = () => {
-                micBtn.classList.add('listening'); [cite: 86]
+                micBtn.classList.add('listening');
             };
 
             recognition.onresult = (event) => {
@@ -47,7 +47,7 @@
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     result += event.results[i][0].transcript;
                 }
-                textOutput.value = result; // O texto aparece enquanto você fala
+                textOutput.value = result;
             };
 
             recognition.onerror = (event) => {
@@ -56,25 +56,27 @@
             };
 
             recognition.onend = () => {
-                micBtn.classList.remove('listening'); [cite: 86]
+                micBtn.classList.remove('listening');
             };
 
             micBtn.onclick = () => {
-                recognition.start();
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.log("Reconhecimento já está ativo.");
+                }
             };
+        } else {
+            alert("Navegador não suporta reconhecimento de voz.");
         }
 
-        // Função para enviar o texto de volta para o Lab principal
         submitBtn.onclick = () => {
             const finalText = textOutput.value.trim();
             if (window.opener) {
-                // Envia a mensagem para a janela que abriu este popup [cite: 16]
                 window.opener.postMessage({
                     type: 'SPEECH_DATA',
                     text: finalText
                 }, "*"); 
-                
-                // Fecha a janela imediatamente após o envio [cite: 22]
                 window.close(); 
             } else {
                 alert("Por favor, abra o estúdio através do Speaking Lab.");
