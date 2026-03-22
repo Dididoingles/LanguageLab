@@ -2,66 +2,62 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Speaking Studio 🎙️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Teste de Microfone 🎙️</title>
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .instruction { font-size: 0.85rem; text-align: center; margin-bottom: 15px; color: #ccc; }
-        #textOutput { width: 100%; background: #2a2a2a; border: 1px solid #444; color: white; padding: 15px; border-radius: 10px; min-height: 100px; margin-bottom: 20px; font-family: 'Poppins'; outline: none; resize: none; }
-        .mic-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: #6c757d; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
-        /* Red color when active as requested [cite: 17, 20] */
-        .mic-btn.listening { background: #c20000; box-shadow: 0 0 20px #c20000; }
-        .submit-btn { background: #c20000; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #1a1a1a; color: white; }
+        #textOutput { width: 80%; height: 100px; margin: 20px; padding: 10px; border-radius: 10px; }
+        .mic-btn { width: 80px; height: 80px; border-radius: 50%; border: none; cursor: pointer; font-size: 2rem; background: #6c757d; color: white; }
+        .mic-btn.listening { background: #c20000; box-shadow: 0 0 15px #c20000; }
     </style>
 </head>
 <body>
-    <div class="instruction">Foi isso mesmo que você quis dizer? Edite se necessário. [cite: 19]</div>
-    <textarea id="textOutput" placeholder="Sua voz aparecerá aqui..."></textarea>
+    <textarea id="textOutput" placeholder="O que você falar aparecerá aqui..."></textarea>
     <button id="micBtn" class="mic-btn">🎙️</button>
-    <button id="submitBtn" class="submit-btn">Enviar e Verificar [cite: 19]</button>
+    <p id="status">Clique no microfone e fale</p>
 
     <script>
         const micBtn = document.getElementById('micBtn');
         const textOutput = document.getElementById('textOutput');
-        const submitBtn = document.getElementById('submitBtn');
+        const status = document.getElementById('status');
 
-        // Using the Web Speech API tool from your original code 
-        if ('webkitSpeechRecognition' in window) {
-            const recognition = new webkitSpeechRecognition();
-            recognition.lang = 'en-US'; [cite: 86]
+        // Verifica se o navegador suporta a API [cite: 85]
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            
+            recognition.lang = 'en-US'; // [cite: 86]
             recognition.continuous = false;
             recognition.interimResults = false;
 
             recognition.onstart = () => {
-                micBtn.classList.add('listening'); [cite: 17]
+                micBtn.classList.add('listening');
+                status.innerText = "Ouvindo...";
             };
 
-            recognition.onresult = (e) => {
-                // Landing the result into the editable box [cite: 18, 87]
-                textOutput.value = e.results[0][0].transcript;
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                textOutput.value = transcript;
+                status.innerText = "Reconhecido!";
+            };
+
+            recognition.onerror = (event) => {
+                status.innerText = "Erro: " + event.error;
+                micBtn.classList.remove('listening');
             };
 
             recognition.onend = () => {
                 micBtn.classList.remove('listening');
+                if (status.innerText === "Ouvindo...") {
+                    status.innerText = "Parou de ouvir.";
+                }
             };
 
             micBtn.onclick = () => {
                 recognition.start();
             };
         } else {
-            alert("Speech recognition not supported in this browser.");
+            status.innerText = "Navegador não suporta Speech API.";
         }
-
-        submitBtn.onclick = () => {
-            const text = textOutput.value;
-            // Sending the data back to the main Lab [cite: 22, 23]
-            if (window.opener) {
-                window.opener.postMessage({ type: 'SPEECH_DATA', text: text }, "*");
-                window.close(); // Immediate close as requested [cite: 22]
-            } else {
-                alert("Please open this from the English Lab page.");
-            }
-        };
     </script>
 </body>
 </html>
