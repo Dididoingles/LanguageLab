@@ -2,102 +2,603 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Speaking Studio 🎙️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Speaking Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .instruction { font-size: 0.85rem; text-align: center; margin-bottom: 15px; color: #ccc; }
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
         
-        /* Agora é apenas para leitura */
-        #textOutput { width: 100%; background: #2a2a2a; border: 1px solid #444; color: white; padding: 15px; border-radius: 10px; min-height: 120px; margin-bottom: 20px; font-family: 'Poppins'; outline: none; resize: none; font-size: 1rem; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh;
+            margin: 0; 
+            padding: clamp(12px, 5vw, 24px);
+            position: relative;
+            overflow-x: hidden;
+        }
         
-        .mic-btn { width: 80px; height: 80px; border-radius: 50%; border: none; background: #6c757d; color: white; font-size: 2rem; cursor: pointer; transition: 0.3s; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
-        .mic-btn.listening { background: #c20000; box-shadow: 0 0 20px #c20000; }
+        /* Container flexível principal */
+        .main-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(16px, 4vh, 25px);
+        }
         
-        .btn-group { display: flex; gap: 10px; width: 100%; }
+        .instruction { 
+            font-size: clamp(0.7rem, 3.5vw, 0.85rem); 
+            text-align: center; 
+            color: #ccc; 
+            line-height: 1.4;
+            padding: 0 clamp(8px, 2vw, 16px);
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: clamp(10px, 2vw, 15px);
+        }
         
-        .submit-btn { background: #c20000; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; flex: 2; transition: 0.2s; }
-        .submit-btn:hover { background: #e60000; }
-
-        .retry-btn { background: #444; color: white; border: none; padding: 12px 20px; border-radius: 25px; font-weight: 400; cursor: pointer; flex: 1; transition: 0.2s; font-size: 0.85rem; }
-        .retry-btn:hover { background: #555; }
+        /* Área de texto flexível */
+        #textOutput { 
+            width: 100%; 
+            background: #2a2a2a; 
+            border: 2px solid #444; 
+            color: white; 
+            padding: clamp(14px, 4vw, 20px); 
+            border-radius: clamp(12px, 3vw, 20px); 
+            min-height: clamp(120px, 25vh, 180px);
+            font-family: 'Poppins', sans-serif; 
+            outline: none; 
+            resize: vertical;
+            font-size: clamp(0.9rem, 4vw, 1.1rem); 
+            line-height: 1.5;
+            transition: all 0.3s ease;
+        }
+        
+        #textOutput:focus {
+            border-color: #c20000;
+            background: #323232;
+        }
+        
+        /* Botão do microfone */
+        .mic-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .mic-btn { 
+            width: clamp(65px, 18vw, 90px);
+            height: clamp(65px, 18vw, 90px);
+            border-radius: 50%; 
+            border: none; 
+            background: #6c757d; 
+            color: white; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .mic-btn:active {
+            transform: scale(0.92);
+        }
+        
+        .mic-btn.listening { 
+            background: #c20000; 
+            box-shadow: 0 0 20px rgba(194,0,0,0.6);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(194,0,0,0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(194,0,0,0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(194,0,0,0); }
+        }
+        
+        /* Grupo de botões flexível */
+        .btn-group { 
+            display: flex; 
+            gap: clamp(10px, 3vw, 16px); 
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        
+        .submit-btn { 
+            background: #c20000; 
+            color: white; 
+            border: none; 
+            padding: clamp(12px, 3.5vw, 16px) clamp(20px, 5vw, 30px);
+            border-radius: 50px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            flex: 2;
+            min-width: 140px;
+            transition: all 0.2s ease;
+            font-size: clamp(0.85rem, 4vw, 1rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn:active {
+            transform: scale(0.97);
+        }
+        
+        .submit-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .retry-btn { 
+            background: #444; 
+            color: white; 
+            border: none; 
+            padding: clamp(12px, 3.5vw, 16px) clamp(16px, 4vw, 24px);
+            border-radius: 50px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            flex: 1;
+            min-width: 110px;
+            transition: all 0.2s ease;
+            font-size: clamp(0.85rem, 4vw, 0.95rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .retry-btn:active {
+            transform: scale(0.97);
+        }
+        
+        /* Toast de notificação */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: clamp(10px, 3vw, 14px) clamp(16px, 4vw, 24px);
+            border-radius: 50px;
+            font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+            font-weight: 500;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-left: 3px solid #c20000;
+            max-width: 90%;
+            text-align: center;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast.success {
+            border-left-color: #00c851;
+        }
+        
+        .toast.error {
+            border-left-color: #ff4444;
+        }
+        
+        .toast.warning {
+            border-left-color: #ffbb33;
+        }
+        
+        /* Responsividade extrema */
+        @media (max-width: 480px) {
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .submit-btn, .retry-btn {
+                width: 100%;
+                min-width: unset;
+            }
+            
+            .mic-btn {
+                width: 70px;
+                height: 70px;
+            }
+        }
+        
+        @media (max-width: 380px) {
+            body {
+                padding: 12px;
+            }
+            
+            .instruction {
+                font-size: 0.7rem;
+            }
+            
+            .submit-btn, .retry-btn {
+                padding: 11px 16px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .main-container {
+                max-width: 650px;
+            }
+        }
+        
+        /* Animações de feedback */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .error-shake {
+            animation: shake 0.3s ease-in-out;
+            border-color: #ff4444 !important;
+        }
+        
+        .success-pulse {
+            animation: successPulse 0.5s ease;
+        }
+        
+        @keyframes successPulse {
+            0% { transform: scale(1); background: #c20000; }
+            50% { transform: scale(1.05); background: #ff3333; }
+            100% { transform: scale(1); background: #c20000; }
+        }
     </style>
 </head>
 <body>
-    <div class="instruction">
-        Confira sua fala abaixo. Se estiver correto, envie. <br>Caso contrário, clique em "Tentar de Novo" e grave novamente.
-    </div>
-    
-    <textarea id="textOutput" readonly placeholder="Sua voz aparecerá aqui..."></textarea>
-    
-    <button id="micBtn" class="mic-btn">🎙️</button>
-    
-    <div class="btn-group">
-        <button id="btnRetry" class="retry-btn">Recomeçar</button>
-        <button id="submitBtn" class="submit-btn">Enviar e Verificar</button>
+    <div class="main-container">
+        <div class="instruction">
+            Toque no microfone e fale claramente<br>
+            Confirme se o texto está correto antes de enviar
+        </div>
+        
+        <textarea id="textOutput" readonly placeholder="Sua voz aparecerá aqui automaticamente..."></textarea>
+        
+        <div class="mic-wrapper">
+            <button id="micBtn" class="mic-btn"></button>
+        </div>
+        
+        <div class="btn-group">
+            <button id="btnRetry" class="retry-btn"></button>
+            <button id="submitBtn" class="submit-btn"></button>
+        </div>
     </div>
 
     <script>
+        // Elementos DOM
         const micBtn = document.getElementById('micBtn');
         const textOutput = document.getElementById('textOutput');
         const submitBtn = document.getElementById('submitBtn');
         const btnRetry = document.getElementById('btnRetry');
-
+        
+        // Suporte a vibração (se disponível)
+        const vibrate = (duration = 50) => {
+            if (window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate(duration);
+            }
+        };
+        
+        // Sistema de notificações Toast
+        function showToast(message, type = 'info') {
+            // Remover toast existente
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            // Adicionar ícone Lucide apropriado
+            const iconSpan = document.createElement('span');
+            iconSpan.style.display = 'inline-flex';
+            iconSpan.style.alignItems = 'center';
+            
+            if (type === 'success') {
+                iconSpan.innerHTML = '<i data-lucide="check-circle" style="width: 18px; height: 18px;"></i>';
+            } else if (type === 'error') {
+                iconSpan.innerHTML = '<i data-lucide="alert-circle" style="width: 18px; height: 18px;"></i>';
+            } else if (type === 'warning') {
+                iconSpan.innerHTML = '<i data-lucide="alert-triangle" style="width: 18px; height: 18px;"></i>';
+            } else {
+                iconSpan.innerHTML = '<i data-lucide="info" style="width: 18px; height: 18px;"></i>';
+            }
+            
+            const textSpan = document.createElement('span');
+            textSpan.textContent = message;
+            
+            toast.appendChild(iconSpan);
+            toast.appendChild(textSpan);
+            document.body.appendChild(toast);
+            
+            // Inicializar ícones do toast
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
+            
+            // Forçar reflow
+            toast.offsetHeight;
+            toast.classList.add('show');
+            
+            // Auto remover após 3 segundos
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Feedback de clique bem sucedido
+        function successFeedback(element) {
+            vibrate(30);
+            element.style.transform = 'scale(0.97)';
+            setTimeout(() => {
+                element.style.transform = '';
+            }, 150);
+        }
+        
+        // Feedback de erro
+        function errorFeedback(element) {
+            vibrate(100);
+            element.classList.add('error-shake');
+            setTimeout(() => {
+                element.classList.remove('error-shake');
+            }, 300);
+        }
+        
+        // Inicializar ícones do Lucide
+        function initIcons() {
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
+        }
+        
+        // Definir ícones - microfone SEMPRE usa o mesmo ícone convencional
+        function setIcons() {
+            micBtn.innerHTML = '<i data-lucide="mic"></i>';
+            btnRetry.innerHTML = '<i data-lucide="refresh-cw"></i> Recomeçar';
+            submitBtn.innerHTML = '<i data-lucide="send"></i> Enviar e Verificar';
+            initIcons();
+        }
+        
+        setIcons();
+        
+        // Verificar suporte a Speech Recognition
         let isListening = false;
+        let recognition = null;
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
+        
         if (SpeechRecognition) {
-            const recognition = new SpeechRecognition();
+            recognition = new SpeechRecognition();
             recognition.lang = 'en-US';
             recognition.continuous = true;
             recognition.interimResults = false;
-
+            
             recognition.onstart = () => {
                 isListening = true;
                 micBtn.classList.add('listening');
+                // Mantém o mesmo ícone de microfone (sem alterar)
+                micBtn.innerHTML = '<i data-lucide="mic"></i>';
+                initIcons();
+                showToast('Gravando... Fale agora', 'success');
+                vibrate(30);
             };
-
+            
             recognition.onresult = (event) => {
                 let currentTranscript = "";
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     currentTranscript += event.results[i][0].transcript;
                 }
-                textOutput.value += (textOutput.value ? " " : "") + currentTranscript;
+                const newText = textOutput.value ? textOutput.value + " " + currentTranscript : currentTranscript;
+                textOutput.value = newText;
+                
+                // Feedback visual de sucesso na captura
+                textOutput.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    textOutput.style.transform = '';
+                }, 200);
+                
+                showToast('Texto capturado com sucesso!', 'success');
+                vibrate(30);
             };
-
-            recognition.onend = () => {
+            
+            recognition.onerror = (event) => {
+                console.error('Erro no reconhecimento:', event.error);
                 isListening = false;
                 micBtn.classList.remove('listening');
+                // Mantém o mesmo ícone de microfone
+                micBtn.innerHTML = '<i data-lucide="mic"></i>';
+                initIcons();
+                
+                let errorMessage = '';
+                switch(event.error) {
+                    case 'no-speech':
+                        errorMessage = 'Nenhuma fala detectada. Tente novamente.';
+                        break;
+                    case 'audio-capture':
+                        errorMessage = 'Microfone não encontrado. Verifique as permissões.';
+                        break;
+                    case 'not-allowed':
+                        errorMessage = 'Permissão do microfone negada.';
+                        break;
+                    default:
+                        errorMessage = 'Erro na captura de voz. Tente novamente.';
+                }
+                
+                showToast(errorMessage, 'error');
+                errorFeedback(micBtn);
+                vibrate(100);
             };
-
+            
+            recognition.onend = () => {
+                if (isListening) {
+                    isListening = false;
+                    micBtn.classList.remove('listening');
+                    // Mantém o mesmo ícone de microfone
+                    micBtn.innerHTML = '<i data-lucide="mic"></i>';
+                    initIcons();
+                    
+                    if (!textOutput.value.trim()) {
+                        showToast('Nenhum texto foi capturado. Tente novamente.', 'warning');
+                    } else {
+                        showToast('Gravação finalizada com sucesso!', 'success');
+                    }
+                    vibrate(30);
+                }
+            };
+            
             micBtn.onclick = () => {
+                if (!recognition) {
+                    showToast('Reconhecimento de voz não disponível', 'error');
+                    errorFeedback(micBtn);
+                    return;
+                }
+                
                 if (!isListening) {
-                    recognition.start();
+                    try {
+                        recognition.start();
+                        successFeedback(micBtn);
+                    } catch (error) {
+                        console.error('Erro ao iniciar:', error);
+                        showToast('Erro ao iniciar gravação. Tente novamente.', 'error');
+                        errorFeedback(micBtn);
+                    }
                 } else {
                     recognition.stop();
+                    successFeedback(micBtn);
                 }
             };
         } else {
-            alert("Navegador não suporta reconhecimento de voz.");
+            // Navegador não suporta
+            micBtn.disabled = true;
+            micBtn.style.opacity = '0.5';
+            showToast('Seu navegador não suporta reconhecimento de voz', 'error');
+            errorFeedback(micBtn);
         }
-
-        // Função para limpar o texto e tentar de novo
+        
+        // Botão recomeçar com feedback
         btnRetry.onclick = () => {
-            textOutput.value = "";
-        };
-
-        submitBtn.onclick = () => {
-            const finalText = textOutput.value.trim();
-            if (window.opener) {
-                window.opener.postMessage({
-                    type: 'SPEECH_DATA',
-                    text: finalText
-                }, "*"); 
-                window.close(); 
+            if (textOutput.value.trim()) {
+                textOutput.value = "";
+                showToast('Texto limpo! Pode gravar novamente.', 'success');
+                successFeedback(btnRetry);
+                vibrate(30);
+                
+                // Animação no textarea
+                textOutput.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    textOutput.style.transform = '';
+                }, 200);
             } else {
-                alert("Por favor, abra o estúdio através do Speaking Lab.");
+                showToast('O texto já está vazio. Toque no microfone para gravar.', 'warning');
+                successFeedback(btnRetry);
             }
         };
+        
+        // Botão enviar com validação
+        submitBtn.onclick = () => {
+            const finalText = textOutput.value.trim();
+            
+            if (!finalText) {
+                showToast('Nenhum texto para enviar. Grave sua fala primeiro.', 'warning');
+                errorFeedback(submitBtn);
+                vibrate(100);
+                textOutput.classList.add('error-shake');
+                setTimeout(() => {
+                    textOutput.classList.remove('error-shake');
+                }, 300);
+                return;
+            }
+            
+            // Feedback de loading
+            submitBtn.classList.add('loading');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i data-lucide="loader-circle"></i> Enviando...';
+            initIcons();
+            
+            successFeedback(submitBtn);
+            showToast('Enviando texto...', 'info');
+            
+            // Simular pequeno delay para feedback visual
+            setTimeout(() => {
+                if (window.opener) {
+                    try {
+                        window.opener.postMessage({
+                            type: 'SPEECH_DATA',
+                            text: finalText
+                        }, "*");
+                        
+                        showToast('Texto enviado com sucesso!', 'success');
+                        vibrate(50);
+                        
+                        // Feedback visual de sucesso no botão
+                        submitBtn.style.background = '#00c851';
+                        setTimeout(() => {
+                            window.close();
+                        }, 500);
+                        
+                    } catch (error) {
+                        console.error('Erro ao enviar:', error);
+                        showToast('Erro ao enviar texto. Tente novamente.', 'error');
+                        errorFeedback(submitBtn);
+                        submitBtn.classList.remove('loading');
+                        submitBtn.innerHTML = originalText;
+                        initIcons();
+                        submitBtn.style.background = '#c20000';
+                    }
+                } else {
+                    showToast('Erro: Abra o estúdio através do Speaking Lab.', 'error');
+                    errorFeedback(submitBtn);
+                    submitBtn.classList.remove('loading');
+                    submitBtn.innerHTML = originalText;
+                    initIcons();
+                }
+            }, 300);
+        };
+        
+        // Prevenir zoom acidental em inputs em iOS
+        document.querySelectorAll('button, textarea').forEach(element => {
+            element.addEventListener('touchstart', (e) => {
+                // Apenas prevenir zoom duplo, manter cliques normais
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        });
+        
+        // Atualizar ícones quando a janela for redimensionada (útil para responsividade)
+        window.addEventListener('resize', () => {
+            setTimeout(initIcons, 100);
+        });
+        
+        // Mostrar instrução inicial
+        setTimeout(() => {
+            showToast('Toque no microfone para começar', 'info');
+        }, 500);
     </script>
 </body>
 </html>
