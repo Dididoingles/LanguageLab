@@ -27,7 +27,6 @@
             overflow-x: hidden;
         }
         
-        /* Container flexível principal */
         .main-container {
             width: 100%;
             max-width: 600px;
@@ -42,13 +41,11 @@
             text-align: center; 
             color: #ccc; 
             line-height: 1.4;
-            padding: 0 clamp(8px, 2vw, 16px);
             background: rgba(255,255,255,0.05);
             border-radius: 12px;
             padding: clamp(10px, 2vw, 15px);
         }
         
-        /* Área de texto flexível */
         #textOutput { 
             width: 100%; 
             background: #2a2a2a; 
@@ -70,7 +67,6 @@
             background: #323232;
         }
         
-        /* Botão do microfone */
         .mic-wrapper {
             display: flex;
             justify-content: center;
@@ -90,7 +86,6 @@
             align-items: center; 
             justify-content: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            position: relative;
         }
         
         .mic-btn:active {
@@ -109,7 +104,6 @@
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(194,0,0,0); }
         }
         
-        /* Grupo de botões flexível */
         .btn-group { 
             display: flex; 
             gap: clamp(10px, 3vw, 16px); 
@@ -133,17 +127,10 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            position: relative;
-            overflow: hidden;
         }
         
         .submit-btn:active {
             transform: scale(0.97);
-        }
-        
-        .submit-btn.loading {
-            opacity: 0.7;
-            pointer-events: none;
         }
         
         .retry-btn { 
@@ -168,7 +155,6 @@
             transform: scale(0.97);
         }
         
-        /* Toast de notificação */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -209,7 +195,6 @@
             border-left-color: #ffbb33;
         }
         
-        /* Responsividade extrema */
         @media (max-width: 480px) {
             .btn-group {
                 flex-direction: column;
@@ -219,35 +204,8 @@
                 width: 100%;
                 min-width: unset;
             }
-            
-            .mic-btn {
-                width: 70px;
-                height: 70px;
-            }
         }
         
-        @media (max-width: 380px) {
-            body {
-                padding: 12px;
-            }
-            
-            .instruction {
-                font-size: 0.7rem;
-            }
-            
-            .submit-btn, .retry-btn {
-                padding: 11px 16px;
-                font-size: 0.8rem;
-            }
-        }
-        
-        @media (min-width: 768px) {
-            .main-container {
-                max-width: 650px;
-            }
-        }
-        
-        /* Animações de feedback */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
@@ -257,16 +215,6 @@
         .error-shake {
             animation: shake 0.3s ease-in-out;
             border-color: #ff4444 !important;
-        }
-        
-        .success-pulse {
-            animation: successPulse 0.5s ease;
-        }
-        
-        @keyframes successPulse {
-            0% { transform: scale(1); background: #c20000; }
-            50% { transform: scale(1.05); background: #ff3333; }
-            100% { transform: scale(1); background: #c20000; }
         }
     </style>
 </head>
@@ -290,315 +238,117 @@
     </div>
 
     <script>
-        // Elementos DOM
         const micBtn = document.getElementById('micBtn');
         const textOutput = document.getElementById('textOutput');
         const submitBtn = document.getElementById('submitBtn');
         const btnRetry = document.getElementById('btnRetry');
-        
-        // Suporte a vibração (se disponível)
-        const vibrate = (duration = 50) => {
-            if (window.navigator && window.navigator.vibrate) {
-                window.navigator.vibrate(duration);
-            }
-        };
-        
-        // Sistema de notificações Toast
+
+        // Sistema de notificações Toast (apenas visual, não afeta funcionalidade)
         function showToast(message, type = 'info') {
-            // Remover toast existente
             const existingToast = document.querySelector('.toast');
-            if (existingToast) {
-                existingToast.remove();
-            }
+            if (existingToast) existingToast.remove();
             
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            
-            // Adicionar ícone Lucide apropriado
-            const iconSpan = document.createElement('span');
-            iconSpan.style.display = 'inline-flex';
-            iconSpan.style.alignItems = 'center';
-            
-            if (type === 'success') {
-                iconSpan.innerHTML = '<i data-lucide="check-circle" style="width: 18px; height: 18px;"></i>';
-            } else if (type === 'error') {
-                iconSpan.innerHTML = '<i data-lucide="alert-circle" style="width: 18px; height: 18px;"></i>';
-            } else if (type === 'warning') {
-                iconSpan.innerHTML = '<i data-lucide="alert-triangle" style="width: 18px; height: 18px;"></i>';
-            } else {
-                iconSpan.innerHTML = '<i data-lucide="info" style="width: 18px; height: 18px;"></i>';
-            }
-            
-            const textSpan = document.createElement('span');
-            textSpan.textContent = message;
-            
-            toast.appendChild(iconSpan);
-            toast.appendChild(textSpan);
+            toast.innerHTML = `<span style="display: inline-flex; align-items: center;"><i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info'}" style="width: 18px; height: 18px;"></i></span><span>${message}</span>`;
             document.body.appendChild(toast);
             
-            // Inicializar ícones do toast
-            if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                lucide.createIcons();
-            }
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
             
-            // Forçar reflow
             toast.offsetHeight;
             toast.classList.add('show');
             
-            // Auto remover após 3 segundos
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-        
-        // Feedback de clique bem sucedido
-        function successFeedback(element) {
-            vibrate(30);
-            element.style.transform = 'scale(0.97)';
-            setTimeout(() => {
-                element.style.transform = '';
-            }, 150);
-        }
-        
-        // Feedback de erro
-        function errorFeedback(element) {
-            vibrate(100);
-            element.classList.add('error-shake');
-            setTimeout(() => {
-                element.classList.remove('error-shake');
-            }, 300);
-        }
-        
-        // Inicializar ícones do Lucide
+
+        // Inicializar ícones
         function initIcons() {
             if (typeof lucide !== 'undefined' && lucide.createIcons) {
                 lucide.createIcons();
             }
         }
         
-        // Definir ícones - microfone SEMPRE usa o mesmo ícone convencional
-        function setIcons() {
-            micBtn.innerHTML = '<i data-lucide="mic"></i>';
-            btnRetry.innerHTML = '<i data-lucide="refresh-cw"></i> Recomeçar';
-            submitBtn.innerHTML = '<i data-lucide="send"></i> Enviar e Verificar';
-            initIcons();
-        }
-        
-        setIcons();
-        
-        // Verificar suporte a Speech Recognition
+        micBtn.innerHTML = '<i data-lucide="mic"></i>';
+        btnRetry.innerHTML = '<i data-lucide="refresh-cw"></i> Recomeçar';
+        submitBtn.innerHTML = '<i data-lucide="send"></i> Enviar e Verificar';
+        initIcons();
+
         let isListening = false;
-        let recognition = null;
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        
+
         if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
+            const recognition = new SpeechRecognition();
             recognition.lang = 'en-US';
             recognition.continuous = true;
             recognition.interimResults = false;
-            
+
             recognition.onstart = () => {
                 isListening = true;
                 micBtn.classList.add('listening');
-                // Mantém o mesmo ícone de microfone (sem alterar)
                 micBtn.innerHTML = '<i data-lucide="mic"></i>';
                 initIcons();
                 showToast('Gravando... Fale agora', 'success');
-                vibrate(30);
             };
-            
+
             recognition.onresult = (event) => {
                 let currentTranscript = "";
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     currentTranscript += event.results[i][0].transcript;
                 }
-                const newText = textOutput.value ? textOutput.value + " " + currentTranscript : currentTranscript;
-                textOutput.value = newText;
-                
-                // Feedback visual de sucesso na captura
-                textOutput.style.transform = 'scale(1.02)';
-                setTimeout(() => {
-                    textOutput.style.transform = '';
-                }, 200);
-                
-                showToast('Texto capturado com sucesso!', 'success');
-                vibrate(30);
+                textOutput.value += (textOutput.value ? " " : "") + currentTranscript;
+                showToast('Texto capturado!', 'success');
             };
-            
+
             recognition.onerror = (event) => {
-                console.error('Erro no reconhecimento:', event.error);
                 isListening = false;
                 micBtn.classList.remove('listening');
-                // Mantém o mesmo ícone de microfone
                 micBtn.innerHTML = '<i data-lucide="mic"></i>';
                 initIcons();
-                
-                let errorMessage = '';
-                switch(event.error) {
-                    case 'no-speech':
-                        errorMessage = 'Nenhuma fala detectada. Tente novamente.';
-                        break;
-                    case 'audio-capture':
-                        errorMessage = 'Microfone não encontrado. Verifique as permissões.';
-                        break;
-                    case 'not-allowed':
-                        errorMessage = 'Permissão do microfone negada.';
-                        break;
-                    default:
-                        errorMessage = 'Erro na captura de voz. Tente novamente.';
-                }
-                
-                showToast(errorMessage, 'error');
-                errorFeedback(micBtn);
-                vibrate(100);
+                showToast('Erro na captura. Tente novamente.', 'error');
             };
-            
+
             recognition.onend = () => {
-                if (isListening) {
-                    isListening = false;
-                    micBtn.classList.remove('listening');
-                    // Mantém o mesmo ícone de microfone
-                    micBtn.innerHTML = '<i data-lucide="mic"></i>';
-                    initIcons();
-                    
-                    if (!textOutput.value.trim()) {
-                        showToast('Nenhum texto foi capturado. Tente novamente.', 'warning');
-                    } else {
-                        showToast('Gravação finalizada com sucesso!', 'success');
-                    }
-                    vibrate(30);
-                }
+                isListening = false;
+                micBtn.classList.remove('listening');
+                micBtn.innerHTML = '<i data-lucide="mic"></i>';
+                initIcons();
             };
-            
+
             micBtn.onclick = () => {
-                if (!recognition) {
-                    showToast('Reconhecimento de voz não disponível', 'error');
-                    errorFeedback(micBtn);
-                    return;
-                }
-                
                 if (!isListening) {
-                    try {
-                        recognition.start();
-                        successFeedback(micBtn);
-                    } catch (error) {
-                        console.error('Erro ao iniciar:', error);
-                        showToast('Erro ao iniciar gravação. Tente novamente.', 'error');
-                        errorFeedback(micBtn);
-                    }
+                    recognition.start();
                 } else {
                     recognition.stop();
-                    successFeedback(micBtn);
                 }
             };
         } else {
-            // Navegador não suporta
             micBtn.disabled = true;
             micBtn.style.opacity = '0.5';
-            showToast('Seu navegador não suporta reconhecimento de voz', 'error');
-            errorFeedback(micBtn);
+            showToast('Navegador não suporta reconhecimento de voz', 'error');
         }
-        
-        // Botão recomeçar com feedback
+
+        // Função para limpar o texto
         btnRetry.onclick = () => {
-            if (textOutput.value.trim()) {
-                textOutput.value = "";
-                showToast('Texto limpo! Pode gravar novamente.', 'success');
-                successFeedback(btnRetry);
-                vibrate(30);
-                
-                // Animação no textarea
-                textOutput.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    textOutput.style.transform = '';
-                }, 200);
-            } else {
-                showToast('O texto já está vazio. Toque no microfone para gravar.', 'warning');
-                successFeedback(btnRetry);
-            }
+            textOutput.value = "";
+            showToast('Texto limpo! Pode gravar novamente.', 'success');
         };
-        
-        // Botão enviar com validação
+
+        // Função de envio - IDÊNTICA AO ORIGINAL (sem delays)
         submitBtn.onclick = () => {
             const finalText = textOutput.value.trim();
-            
-            if (!finalText) {
-                showToast('Nenhum texto para enviar. Grave sua fala primeiro.', 'warning');
-                errorFeedback(submitBtn);
-                vibrate(100);
-                textOutput.classList.add('error-shake');
-                setTimeout(() => {
-                    textOutput.classList.remove('error-shake');
-                }, 300);
-                return;
+            if (window.opener) {
+                window.opener.postMessage({
+                    type: 'SPEECH_DATA',
+                    text: finalText
+                }, "*"); 
+                window.close(); 
+            } else {
+                showToast('Por favor, abra o estúdio através do Speaking Lab.', 'error');
             }
-            
-            // Feedback de loading
-            submitBtn.classList.add('loading');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i data-lucide="loader-circle"></i> Enviando...';
-            initIcons();
-            
-            successFeedback(submitBtn);
-            showToast('Enviando texto...', 'info');
-            
-            // Simular pequeno delay para feedback visual
-            setTimeout(() => {
-                if (window.opener) {
-                    try {
-                        window.opener.postMessage({
-                            type: 'SPEECH_DATA',
-                            text: finalText
-                        }, "*");
-                        
-                        showToast('Texto enviado com sucesso!', 'success');
-                        vibrate(50);
-                        
-                        // Feedback visual de sucesso no botão
-                        submitBtn.style.background = '#00c851';
-                        setTimeout(() => {
-                            window.close();
-                        }, 500);
-                        
-                    } catch (error) {
-                        console.error('Erro ao enviar:', error);
-                        showToast('Erro ao enviar texto. Tente novamente.', 'error');
-                        errorFeedback(submitBtn);
-                        submitBtn.classList.remove('loading');
-                        submitBtn.innerHTML = originalText;
-                        initIcons();
-                        submitBtn.style.background = '#c20000';
-                    }
-                } else {
-                    showToast('Erro: Abra o estúdio através do Speaking Lab.', 'error');
-                    errorFeedback(submitBtn);
-                    submitBtn.classList.remove('loading');
-                    submitBtn.innerHTML = originalText;
-                    initIcons();
-                }
-            }, 300);
         };
-        
-        // Prevenir zoom acidental em inputs em iOS
-        document.querySelectorAll('button, textarea').forEach(element => {
-            element.addEventListener('touchstart', (e) => {
-                // Apenas prevenir zoom duplo, manter cliques normais
-                if (e.touches.length > 1) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-        });
-        
-        // Atualizar ícones quando a janela for redimensionada (útil para responsividade)
-        window.addEventListener('resize', () => {
-            setTimeout(initIcons, 100);
-        });
-        
-        // Mostrar instrução inicial
-        setTimeout(() => {
-            showToast('Toque no microfone para começar', 'info');
-        }, 500);
     </script>
 </body>
 </html>
