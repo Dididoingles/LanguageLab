@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Language Lab</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: 'IBM Plex Mono', monospace;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ===== TEXTOS DO TOPO ===== */
+        .header-text {
+            position: absolute;
+            top: 90px;
+            left: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .title {
+            font-family: 'Caveat', cursive;
+            font-size: 72px;
+            font-weight: 700;
+            color: #2b2b2b;
+            line-height: 1;
+            white-space: nowrap;
+            letter-spacing: -0.08em;
+            margin-right: -0.08em;
+        }
+
+        .subtitle {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 15px;
+            color: #d84343;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== LADO ESQUERDO: VÍDEO ===== */
+        .left-side {
+            position: absolute;
+            top: 220px;
+            left: 40px;
+            bottom: 40px;
+            width: 420px;
+            display: flex;
+            align-items: center;
+        }
+
+        .video-wrapper {
+            width: 100%;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+        }
+
+        /* ===== LADO DIREITO: CIDADE + BOTÃO ===== */
+        .right-side {
+            position: absolute;
+            top: 50%;
+            right: -40px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            z-index: 5;
+        }
+
+        .city-image {
+            width: 480px;
+            margin-bottom: 30px;
+            margin-right: 0;
+        }
+
+        .city-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ===== BOTÃO FÍSICO ===== */
+        .action-btn {
+            background: #f5f5f5;
+            border: 1px solid #2b2b2b;
+            color: #2b2b2b;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-right: 80px;
+            box-shadow: 4px 4px 0px #2b2b2b; 
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+        }
+
+        .action-btn:hover,
+        .action-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #2b2b2b;
+            background-color: #ebebeb;
+        }
+
+        .action-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ===== ANIMAÇÕES ===== */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .right-side.fade-in-up {
+            transform: translateY(-40%);
+        }
+        .right-side.fade-in-up.visible {
+            transform: translateY(-50%);
+        }
+
+        .delay-1 { transition-delay: 0.2s; }
+        .delay-2 { transition-delay: 0.8s; }
+        .delay-3 { transition-delay: 1.4s; }
+        .delay-4 { transition-delay: 1.8s; }
+
+        /* ===== MEDIA QUERIES (MOBILE) ===== */
+        @media (max-width: 900px) {
+            .header-text {
+                top: 40px;
+                left: 20px;
+            }
+            .title {
+                font-size: 42px;
+            }
+            .subtitle {
+                font-size: 12px;
+            }
+
+            .left-side {
+                top: 140px;
+                left: 20px;
+                width: 240px;
+                bottom: auto;
+            }
+
+            .right-side {
+                right: -20px;
+                top: auto;
+                bottom: 40px;
+                transform: none;
+            }
+            .right-side.fade-in-up {
+                transform: translateY(30px);
+            }
+            .right-side.fade-in-up.visible {
+                transform: translateY(0);
+            }
+            
+            .city-image {
+                width: 280px;
+                margin-bottom: 15px;
+            }
+
+            .action-btn {
+                margin-right: 40px;
+                padding: 10px 18px;
+                font-size: 14px;
+                box-shadow: 3px 3px 0px #2b2b2b;
+            }
+            .action-btn:hover, .action-btn:active {
+                transform: translate(3px, 3px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="header-text">
+            <h1 class="title fade-in-up delay-1">O conhecimento ilumina.</h1>
+            <p class="subtitle fade-in-up delay-1">Language Lab | @adicarvalho.prof</p>
+        </div>
+
+        <div class="left-side fade-in-up delay-3">
+            <div class="video-wrapper">
+                <!-- Mudei para .mp4. O código de autoplay e não-loop continua o mesmo -->
+                <video id="marsVideo" src="assets/marsvideo.mp4" autoplay muted playsinline></video>
+            </div>
+        </div>
+
+        <div class="right-side fade-in-up delay-2">
+            <div class="city-image">
+                <img src="assets/opening.webp" alt="Cidade Ilustrada">
+            </div>
+            
+            <button class="action-btn fade-in-up delay-4">
+                Acessar lab
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const elements = document.querySelectorAll('.fade-in-up');
+                elements.forEach(el => el.classList.add('visible'));
+            }, 100);
+            
+            const video = document.getElementById('marsVideo');
+            if (video) {
+                video.currentTime = 0;
+            }
+        });
+    </script>
+</body>
+</html>
